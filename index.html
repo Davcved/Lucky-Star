@@ -33,7 +33,6 @@
         .items {
             display: flex;
             position: absolute;
-            left: 0;
             transition: transform 2s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
@@ -51,14 +50,14 @@
 
         .arrow {
             position: absolute;
-            top: 5px;
+            bottom: -10px; /* Опущена вниз */
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) rotate(180deg); /* Перевернута вниз */
             width: 0;
             height: 0;
             border-left: 15px solid transparent;
             border-right: 15px solid transparent;
-            border-bottom: 20px solid #0088cc;
+            border-top: 20px solid red; /* Красный цвет */
             z-index: 10;
         }
 
@@ -143,8 +142,9 @@
         itemsContainer.style.transform = `translateX(${moveDistance}px)`;
 
         setTimeout(() => {
-            let selectedItem = itemList[selectedIndex];
-            resultText.textContent = `Вам выпало: ${itemNames[selectedItem]}`;
+            let selectedItem = document.querySelectorAll('.item img')[selectedIndex].src;
+            let itemFileName = selectedItem.split('/').pop();  
+            resultText.textContent = `Вам выпало: ${itemNames[itemFileName]}`;
             document.getElementById("spinButton").disabled = false;
         }, 2000);
     }
@@ -154,4 +154,3 @@
 
 </body>
 </html>
-
