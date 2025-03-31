@@ -47,6 +47,7 @@
             border-left: 15px solid transparent;
             border-right: 15px solid transparent;
             border-bottom: 20px solid #ffaa00;
+            z-index: 10;
         }
         button {
             background: #0088cc;
@@ -87,7 +88,7 @@
             slot.className = "slot";
             let img = document.createElement("img");
             img.src = imgSrc;
-            img.setAttribute("data-name", imgSrc.split(".")[0]); // Сохраняем имя
+            img.dataset.name = imgSrc.split(".")[0]; // Сохраняем корректное имя
             slot.appendChild(img);
             slotTrack.appendChild(slot);
         }
@@ -110,7 +111,7 @@
             slotTrack.style.transform = `translateX(${stopPosition}px)`;
             
             setTimeout(() => {
-                let resultImg = slotTrack.children[stopIndex].querySelector("img").getAttribute("data-name");
+                let resultImg = slotTrack.children[stopIndex + 1].querySelector("img").dataset.name;
                 document.getElementById("result").innerText = "Твой приз: " + resultImg.toUpperCase();
                 spinning = false;
                 document.getElementById("spinButton").disabled = false;
