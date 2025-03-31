@@ -50,14 +50,14 @@
 
         .arrow {
             position: absolute;
-            bottom: -10px; /* Опущена вниз */
+            bottom: -10px;
             left: 50%;
-            transform: translateX(-50%) rotate(180deg); /* Перевернута вниз */
+            transform: translateX(-50%) rotate(180deg);
             width: 0;
             height: 0;
             border-left: 15px solid transparent;
             border-right: 15px solid transparent;
-            border-top: 20px solid red; /* Красный цвет */
+            border-top: 20px solid red;
             z-index: 10;
         }
 
@@ -111,11 +111,11 @@
     const itemsContainer = document.getElementById("items");
     const resultText = document.getElementById("result");
 
-    function fillItems() {
+    function fillItems(spinCount) {
         itemsContainer.innerHTML = "";
         let itemList = [];
 
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < spinCount; i++) {
             let imgSrc = items[Math.floor(Math.random() * items.length)];
             itemList.push(imgSrc);
 
@@ -134,8 +134,9 @@
         document.getElementById("spinButton").disabled = true;
         resultText.textContent = ""; 
 
-        let itemList = fillItems();
-        let selectedIndex = Math.floor(Math.random() * 20) + 5;
+        let spinCount = Math.floor(Math.random() * 21) + 10; // От 10 до 30 картинок
+        let itemList = fillItems(spinCount);
+        let selectedIndex = spinCount - 5; // Победный предмет (останавливается примерно по центру)
         let moveDistance = -(selectedIndex * 105) + 130;
 
         itemsContainer.style.transition = "transform 2s cubic-bezier(0.22, 1, 0.36, 1)";
@@ -148,9 +149,8 @@
             document.getElementById("spinButton").disabled = false;
         }, 2000);
     }
-
-    fillItems();
 </script>
 
 </body>
 </html>
+
