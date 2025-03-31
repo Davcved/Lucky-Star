@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Кейс в стиле Telegram</title>
+    <title>Крутите!</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
@@ -83,20 +83,34 @@
             background: gray;
             cursor: not-allowed;
         }
+
+        #result {
+            font-size: 20px;
+            margin-top: 15px;
+            font-weight: 700;
+            color: #ffaa00;
+        }
     </style>
 </head>
 <body>
 
-<h1>Открытие кейса в стиле Telegram</h1>
+<h1>Крутите!</h1>
 <div class="case-container">
     <div class="items" id="items"></div>
     <div class="arrow"></div>
 </div>
 <button id="spinButton" onclick="openCase()">Открыть кейс</button>
+<p id="result"></p>
 
 <script>
     const items = ["banana.png", "cherry.png", "seven.png"];
+    const itemNames = {
+        "banana.png": "🍌 Банан",
+        "cherry.png": "🍒 Вишня",
+        "seven.png": "🎰 Семерка"
+    };
     const itemsContainer = document.getElementById("items");
+    const resultText = document.getElementById("result");
 
     function fillItems() {
         itemsContainer.innerHTML = "";
@@ -119,8 +133,9 @@
 
     function openCase() {
         document.getElementById("spinButton").disabled = true;
-        let itemList = fillItems();
+        resultText.textContent = ""; 
 
+        let itemList = fillItems();
         let selectedIndex = Math.floor(Math.random() * 20) + 5;
         let moveDistance = -(selectedIndex * 105) + 130;
 
@@ -128,6 +143,8 @@
         itemsContainer.style.transform = `translateX(${moveDistance}px)`;
 
         setTimeout(() => {
+            let selectedItem = itemList[selectedIndex];
+            resultText.textContent = `Вам выпало: ${itemNames[selectedItem]}`;
             document.getElementById("spinButton").disabled = false;
         }, 2000);
     }
@@ -137,5 +154,4 @@
 
 </body>
 </html>
-
 
