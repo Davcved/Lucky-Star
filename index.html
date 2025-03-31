@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Слот-машина в стиле Telegram</title>
+    <title>Кейс в стиле Telegram</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
@@ -16,37 +16,38 @@
             padding: 20px;
         }
 
-        .slot-container {
+        .case-container {
             position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            padding: 20px;
+            width: 360px;
+            height: 120px;
+            margin: 20px auto;
+            overflow: hidden;
             background: #1e2b37;
             border-radius: 15px;
-            width: 380px;
-            margin: 20px auto;
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
         }
 
-        .slot {
+        .items {
+            display: flex;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .item {
             width: 100px;
             height: 100px;
+            margin: 0 5px;
             background: #2a3b4d;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 10px;
-            border: 2px solid #0088cc;
-            position: relative;
-            overflow: hidden;
         }
 
-        .slot img {
+        .item img {
             width: 90px;
-            transition: transform 1s ease-out;
         }
 
         .arrow {
@@ -87,47 +88,42 @@
 </head>
 <body>
 
-<h1>Крути слот и выиграй приз!</h1>
-<div class="slot-container">
-    <div class="slot"><img src="banana.png" id="slot1"></div>
-    <div class="slot"><img src="cherry.png" id="slot2"></div>
-    <div class="slot"><img src="seven.png" id="slot3"></div>
+<h1>Открытие кейса в стиле Telegram</h1>
+<div class="case-container">
+    <div class="items" id="items"></div>
     <div class="arrow"></div>
 </div>
-<button id="spinButton" onclick="spin()">Испытать удачу!</button>
+<button id="spinButton" onclick="openCase()">Открыть кейс</button>
 
 <script>
     const items = ["banana.png", "cherry.png", "seven.png"];
-    let spinning = false;
+    const itemsContainer = document.getElementById("items");
 
-    function spin() {
-        if (spinning) return;
-        spinning = true;
+    function fillItems() {
+        itemsContainer.innerHTML = "";
+        for (let i = 0; i < 30; i++) {
+            let imgSrc = items[Math.floor(Math.random() * items.length)];
+            let div = document.createElement("div");
+            div.classList.add("item");
+            let img = document.createElement("img");
+            img.src = imgSrc;
+            div.appendChild(img);
+            itemsContainer.appendChild(div);
+        }
+    }
+
+    function openCase() {
         document.getElementById("spinButton").disabled = true;
-
-        let spins = Array.from({ length: 3 }, () => randomItem());
-
-        document.querySelectorAll('.slot img').forEach((img, i) => {
-            img.style.transform = "translateY(-200px)";
-        });
+        fillItems();
+        let moveDistance = -((Math.floor(Math.random() * 21) + 10) * 105);
+        itemsContainer.style.transform = `translateX(${moveDistance}px)`;
 
         setTimeout(() => {
-            document.getElementById("slot1").src = spins[0];
-            document.getElementById("slot2").src = spins[1];
-            document.getElementById("slot3").src = spins[2];
-
-            document.querySelectorAll('.slot img').forEach((img) => {
-                img.style.transform = "translateY(0)";
-            });
-
-            spinning = false;
             document.getElementById("spinButton").disabled = false;
-        }, 1500);
+        }, 2000);
     }
 
-    function randomItem() {
-        return items[Math.floor(Math.random() * items.length)];
-    }
+    fillItems();
 </script>
 
 </body>
