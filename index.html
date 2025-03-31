@@ -26,6 +26,7 @@
         .slot-track {
             display: flex;
             transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
         }
         .slot {
             width: 100px;
@@ -65,8 +66,7 @@
 <body>
 <h1>Испытай удачу!</h1>
 <div class="slot-container">
-    <div class="slot-track" id="slotTrack">
-    </div>
+    <div class="slot-track" id="slotTrack"></div>
     <img class="arrow" src="arrow.png">
 </div>
 <button id="spinButton" onclick="spin()">Открыть кейс</button>
@@ -74,7 +74,43 @@
 <script>
     const items = ["banana.png", "cherry.png", "seven.png"];
     let spinning = false;
-    const slotTrack = d
+    const slotTrack = document.getElementById("slotTrack");
 
+    function fillSlots() {
+        slotTrack.innerHTML = "";
+        let totalImages = Math.floor(Math.random() * 21) + 10; // От 10 до 30 картинок
+        for (let i = 0; i < totalImages; i++) {
+            let imgSrc = items[Math.floor(Math.random() * items.length)];
+            let slot = document.createElement("div");
+            slot.className = "slot";
+            let img = document.createElement("img");
+            img.src = imgSrc;
+            slot.appendChild(img);
+            slotTrack.appendChild(slot);
+        }
+    }
+
+    function spin() {
+        if (spinning) return;
+        spinning = true;
+        document.getElementById("spinButton").disabled = true;
+        
+        fillSlots();
+        let stopIndex = slotTrack.children.length - 3;
+        let stopPosition = -(stopIndex * 100);
+        
+        slotTrack.style.transition = "transform 4s ease-out";
+        slotTrack.style.transform = `translateX(${stopPosition}px)`;
+        
+        setTimeout(() => {
+            let resultImg = slotTrack.children[stopIndex].querySelector("img").src;
+            document.getElementById("result").innerText = "Твой приз: " + resultImg.split("/").pop().split(".")[0].toUpperCase();
+            spinning = false;
+            document.getElementById("spinButton").disabled = false;
+        }, 4000);
+    }
+</script>
+</body>
+</html>
 
 
