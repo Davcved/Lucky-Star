@@ -30,7 +30,7 @@
         .items {
             display: flex;
             position: relative;
-            transition: transform 2s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: transform 4s cubic-bezier(0.22, 1, 0.36, 1);
             will-change: transform;
         }
 
@@ -54,10 +54,10 @@
             transform: translateX(-50%) rotate(180deg);
             width: 0;
             height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 20px solid red;
-            z-index: 10;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 30px solid red;
+            z-index: 20;
         }
 
         button {
@@ -110,12 +110,15 @@
     const itemsContainer = document.getElementById("items");
     const resultText = document.getElementById("result");
 
-    function fillItems(spinCount) {
+    function fillItems() {
         itemsContainer.innerHTML = "";
         let itemList = [];
 
-        for (let i = 0; i < spinCount; i++) {
+        for (let i = 0; i < 40; i++) { // 40 элементов для плавного прокрута
             let imgSrc = items[Math.floor(Math.random() * items.length)];
+            if (i > 0 && imgSrc === itemList[i - 1]) {
+                imgSrc = items[(Math.floor(Math.random() * items.length) + 1) % items.length];
+            }
             itemList.push(imgSrc);
 
             let div = document.createElement("div");
@@ -133,17 +136,16 @@
         document.getElementById("spinButton").disabled = true;
         resultText.textContent = ""; 
 
-        let spinCount = Math.floor(Math.random() * 21) + 10; // От 10 до 30 картинок
-        let itemList = fillItems(spinCount);
-        let selectedIndex = spinCount - 5; // Победный предмет (останавливается по центру)
+        let itemList = fillItems();
+        let selectedIndex = 35; // Победный предмет (останавливается по центру)
         let moveDistance = -(selectedIndex * 105) + 130;
 
-        // Убираем старый transition перед новой прокруткой (фикс бага)
+        // Убираем старый transition перед новой прокруткой (чтобы не было багов)
         itemsContainer.style.transition = "none";
         itemsContainer.style.transform = "translateX(0px)";
 
         setTimeout(() => {
-            itemsContainer.style.transition = "transform 2s cubic-bezier(0.22, 1, 0.36, 1)";
+            itemsContainer.style.transition = "transform 4s cubic-bezier(0.22, 1, 0.36, 1)";
             itemsContainer.style.transform = `translateX(${moveDistance}px)`;
         }, 50);
 
@@ -152,10 +154,10 @@
             let itemFileName = selectedItem.split('/').pop();  
             resultText.textContent = `Вам выпало: ${itemNames[itemFileName]}`;
             document.getElementById("spinButton").disabled = false;
-        }, 2000);
+        }, 4000);
     }
 
-    fillItems(20); // Начальная загрузка с 20 элементами
+    fillItems(); // Начальная загрузка
 </script>
 
 </body>
