@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Идеальная рулетка</title>
+    <title>Слот-машина</title>
     <style>
         body {
             background-color: #17212b;
@@ -16,11 +16,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px;
             padding: 20px;
             background: #1c1f26;
             border-radius: 15px;
-            width: 350px;
+            width: 150px;
             margin: 20px auto;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
             overflow: hidden;
@@ -40,14 +39,7 @@
         }
         .slot img {
             width: 90px;
-            transition: transform 1s ease-out;
-        }
-        .arrow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
+            transition: transform 0.7s ease-out;
         }
         button {
             background: #0088cc;
@@ -67,14 +59,12 @@
     </style>
 </head>
 <body>
-<h1>Крути рулетку и выиграй приз!</h1>
+<h1>Испытай удачу!</h1>
 <div class="slot-container">
-    <div class="slot"><img src="banana.png" id="slot1"></div>
-    <div class="slot"><img src="cherry.png" id="slot2"></div>
-    <div class="slot"><img src="seven.png" id="slot3"></div>
-    <img class="arrow" src="arrow.png" width="50" height="50">
+    <div class="slot"><img src="banana.png" id="slot"></div>
 </div>
-<button id="spinButton" onclick="spin()">Испытать удачу!!!</button>
+<button id="spinButton" onclick="spin()">Крутить!</button>
+<p id="result"></p>
 <script>
     const items = ["banana.png", "cherry.png", "seven.png"];
     let spinning = false;
@@ -84,30 +74,24 @@
         spinning = true;
         document.getElementById("spinButton").disabled = true;
 
-        let spins = [randomItem(), randomItem(), randomItem()];
-
-        document.getElementById("slot1").style.transform = "translateY(-200px)";
-        document.getElementById("slot2").style.transform = "translateY(-200px)";
-        document.getElementById("slot3").style.transform = "translateY(-200px)";
-
+        let result = randomItem();
+        document.getElementById("slot").style.transform = "translateY(-200px)";
+        
         setTimeout(() => {
-            document.getElementById("slot1").src = spins[0];
-            document.getElementById("slot2").src = spins[1];
-            document.getElementById("slot3").src = spins[2];
-
-            document.getElementById("slot1").style.transform = "translateY(0)";
-            document.getElementById("slot2").style.transform = "translateY(0)";
-            document.getElementById("slot3").style.transform = "translateY(0)";
+            document.getElementById("slot").src = result;
+            document.getElementById("slot").style.transform = "translateY(0)";
+            document.getElementById("result").innerText = "Твой приз: " + result.split(".")[0].toUpperCase();
             spinning = false;
             document.getElementById("spinButton").disabled = false;
-        }, 1500);
+        }, 1000);
     }
-
+    
     function randomItem() {
         return items[Math.floor(Math.random() * items.length)];
     }
 </script>
 </body>
 </html>
+
 
 
