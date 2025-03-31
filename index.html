@@ -9,14 +9,18 @@
         body {
             text-align: center;
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            background: linear-gradient(135deg, #1c1e21, #343a40);
+            color: white;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
         }
         .wheel-container {
             position: relative;
@@ -27,8 +31,9 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 5px solid #333;
+            border: 5px solid #555;
             transition: transform 4s ease-out;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
         .pointer {
             position: absolute;
@@ -44,16 +49,18 @@
         }
         .spin-btn {
             margin-top: 20px;
-            padding: 10px 20px;
+            padding: 12px 24px;
             font-size: 18px;
             cursor: pointer;
             border: none;
-            background-color: #28a745;
+            background: #007aff;
             color: white;
-            border-radius: 5px;
+            border-radius: 8px;
+            transition: background 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
         }
         .spin-btn:active {
-            background-color: #218838;
+            background: #005ecb;
         }
         canvas {
             position: absolute;
@@ -76,9 +83,10 @@
         const canvas = document.getElementById("wheelCanvas");
         const ctx = canvas.getContext("2d");
         const spinButton = document.getElementById("spin");
+        let isSpinning = false;
         let rotation = 0;
 
-        const colors = ["#ff0000", "#ff8000", "#ffff00", "#80ff00", "#00ff80", "#0080ff", "#8000ff", "#ff0080"];
+        const colors = ["#ff4757", "#ffa502", "#2ed573", "#1e90ff", "#3742fa", "#8c7ae6"];
         const sectors = colors.length;
         const angle = (2 * Math.PI) / sectors;
 
@@ -94,16 +102,27 @@
         }
 
         function spinWheel() {
-            let spinAngle = Math.floor(Math.random() * 360) + 1800; // 5+ оборотов
+            if (isSpinning) return;
+            isSpinning = true;
+            spinButton.style.opacity = "0.5"; 
+            spinButton.style.pointerEvents = "none"; 
+
+            let spinAngle = Math.floor(Math.random() * 360) + 1800; 
             rotation += spinAngle;
             canvas.style.transition = "transform 4s ease-out";
             canvas.style.transform = `rotate(${rotation}deg)`;
+
+            setTimeout(() => {
+                isSpinning = false;
+                spinButton.style.opacity = "1";
+                spinButton.style.pointerEvents = "auto";
+            }, 4000);
         }
 
         spinButton.addEventListener("click", spinWheel);
 
         drawWheel();
-        Telegram.WebApp.expand(); // Разворачивает Mini App на весь экран
+        Telegram.WebApp.expand();
     </script>
 </body>
 </html>
