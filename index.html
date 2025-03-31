@@ -3,54 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Слот-машина</title>
+    <title>Слот-машина в стиле Telegram</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
         body {
             background-color: #17212b;
-            color: white;
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
             text-align: center;
-            font-family: Arial, sans-serif;
+            margin: 0;
             padding: 20px;
         }
+
         .slot-container {
+            position: relative;
             display: flex;
-            overflow: hidden;
-            width: 300px;
-            height: 100px;
-            margin: 20px auto;
-            background: #1c1f26;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 20px;
+            background: #1e2b37;
             border-radius: 15px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
-            position: relative;
+            width: 380px;
+            margin: 20px auto;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
         }
-        .slot-track {
-            display: flex;
-            will-change: transform;
-            position: relative;
-            z-index: 1;
-        }
+
         .slot {
             width: 100px;
             height: 100px;
+            background: #2a3b4d;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 10px;
+            border: 2px solid #0088cc;
+            position: relative;
+            overflow: hidden;
         }
+
         .slot img {
             width: 90px;
+            transition: transform 1s ease-out;
         }
+
         .arrow {
             position: absolute;
-            top: -15px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -50%);
             width: 0;
             height: 0;
             border-left: 15px solid transparent;
             border-right: 15px solid transparent;
-            border-bottom: 20px solid #ffaa00;
+            border-top: 20px solid #0088cc;
             z-index: 10;
         }
+
         button {
             background: #0088cc;
             color: white;
@@ -58,10 +69,16 @@
             padding: 15px 30px;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 18px;
+            font-weight: 500;
             margin-top: 15px;
-            transition: background 0.3s;
+            transition: background 0.3s, transform 0.1s;
         }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
         button:disabled {
             background: gray;
             cursor: not-allowed;
@@ -69,57 +86,49 @@
     </style>
 </head>
 <body>
-<h1>Испытай удачу!</h1>
+
+<h1>Крути слот и выиграй приз!</h1>
 <div class="slot-container">
+    <div class="slot"><img src="banana.png" id="slot1"></div>
+    <div class="slot"><img src="cherry.png" id="slot2"></div>
+    <div class="slot"><img src="seven.png" id="slot3"></div>
     <div class="arrow"></div>
-    <div class="slot-track" id="slotTrack"></div>
 </div>
-<button id="spinButton" onclick="spin()">Открыть кейс</button>
-<p id="result"></p>
+<button id="spinButton" onclick="spin()">Испытать удачу!</button>
+
 <script>
     const items = ["banana.png", "cherry.png", "seven.png"];
     let spinning = false;
-    const slotTrack = document.getElementById("slotTrack");
-
-    function fillSlots() {
-        slotTrack.innerHTML = "";
-        let totalImages = Math.floor(Math.random() * 21) + 10; // От 10 до 30 картинок
-        for (let i = 0; i < totalImages; i++) {
-            let imgSrc = items[Math.floor(Math.random() * items.length)];
-            let slot = document.createElement("div");
-            slot.className = "slot";
-            let img = document.createElement("img");
-            img.src = imgSrc;
-            img.dataset.name = imgSrc.split(".")[0]; // Сохраняем корректное имя
-            slot.appendChild(img);
-            slotTrack.appendChild(slot);
-        }
-    }
 
     function spin() {
         if (spinning) return;
         spinning = true;
         document.getElementById("spinButton").disabled = true;
-        
-        fillSlots();
-        slotTrack.style.transition = "none";
-        slotTrack.style.transform = "translateX(0px)";
-        
+
+        let spins = Array.from({ length: 3 }, () => randomItem());
+
+        document.querySelectorAll('.slot img').forEach((img, i) => {
+            img.style.transform = "translateY(-200px)";
+        });
+
         setTimeout(() => {
-            let stopIndex = slotTrack.children.length - 4;
-            let stopPosition = -(stopIndex * 100);
-            
-            slotTrack.style.transition = "transform 4s ease-out";
-            slotTrack.style.transform = `translateX(${stopPosition}px)`;
-            
-            setTimeout(() => {
-                let resultImg = slotTrack.children[stopIndex + 1].querySelector("img").dataset.name;
-                document.getElementById("result").innerText = "Твой приз: " + resultImg.toUpperCase();
-                spinning = false;
-                document.getElementById("spinButton").disabled = false;
-            }, 4000);
-        }, 50);
+            document.getElementById("slot1").src = spins[0];
+            document.getElementById("slot2").src = spins[1];
+            document.getElementById("slot3").src = spins[2];
+
+            document.querySelectorAll('.slot img').forEach((img) => {
+                img.style.transform = "translateY(0)";
+            });
+
+            spinning = false;
+            document.getElementById("spinButton").disabled = false;
+        }, 1500);
+    }
+
+    function randomItem() {
+        return items[Math.floor(Math.random() * items.length)];
     }
 </script>
+
 </body>
 </html>
