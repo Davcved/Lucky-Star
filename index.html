@@ -25,7 +25,7 @@
         }
         .slot-track {
             display: flex;
-            transition: transform 2s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
         }
         .slot {
             width: 100px;
@@ -37,14 +37,13 @@
         .slot img {
             width: 90px;
         }
-        .indicator {
+        .arrow {
             position: absolute;
-            top: 0;
+            top: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 10px;
-            height: 100px;
-            background: red;
+            width: 30px;
+            height: 30px;
         }
         button {
             background: #0088cc;
@@ -67,39 +66,15 @@
 <h1>Испытай удачу!</h1>
 <div class="slot-container">
     <div class="slot-track" id="slotTrack">
-        <div class="slot"><img src="banana.png"></div>
-        <div class="slot"><img src="cherry.png"></div>
-        <div class="slot"><img src="seven.png"></div>
-        <div class="slot"><img src="banana.png"></div>
-        <div class="slot"><img src="cherry.png"></div>
-        <div class="slot"><img src="seven.png"></div>
     </div>
-    <div class="indicator"></div>
+    <img class="arrow" src="arrow.png">
 </div>
 <button id="spinButton" onclick="spin()">Открыть кейс</button>
 <p id="result"></p>
 <script>
     const items = ["banana.png", "cherry.png", "seven.png"];
     let spinning = false;
-
-    function spin() {
-        if (spinning) return;
-        spinning = true;
-        document.getElementById("spinButton").disabled = true;
-        
-        let randomOffset = -Math.floor(Math.random() * 3) * 100 - 200;
-        document.getElementById("slotTrack").style.transform = `translateX(${randomOffset}px)`;
-        
-        setTimeout(() => {
-            let resultIndex = Math.abs(randomOffset / 100) % 3;
-            document.getElementById("result").innerText = "Твой приз: " + items[resultIndex].split(".")[0].toUpperCase();
-            spinning = false;
-            document.getElementById("spinButton").disabled = false;
-        }, 2000);
-    }
-</script>
-</body>
-</html>
+    const slotTrack = d
 
 
 
