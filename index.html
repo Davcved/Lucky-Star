@@ -33,13 +33,14 @@
         .items {
             display: flex;
             position: absolute;
+            white-space: nowrap;
             transition: transform 2s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .item {
             width: 100px;
             height: 100px;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
         }
@@ -149,6 +150,8 @@
             document.getElementById("spinButton").disabled = false;
         }, 2000);
     }
+
+    fillItems(20); // Начальная загрузка с 20 элементами
 </script>
 
 </body>
