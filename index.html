@@ -25,7 +25,6 @@
         }
         .slot-track {
             display: flex;
-            transition: transform 4s cubic-bezier(0.25, 1, 0.5, 1);
             will-change: transform;
         }
         .slot {
@@ -40,11 +39,14 @@
         }
         .arrow {
             position: absolute;
-            top: -10px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
-            width: 30px;
-            height: 30px;
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 20px solid #ffaa00;
         }
         button {
             background: #0088cc;
@@ -67,7 +69,7 @@
 <h1>Испытай удачу!</h1>
 <div class="slot-container">
     <div class="slot-track" id="slotTrack"></div>
-    <img class="arrow" src="arrow.png">
+    <div class="arrow"></div>
 </div>
 <button id="spinButton" onclick="spin()">Открыть кейс</button>
 <p id="result"></p>
@@ -85,6 +87,7 @@
             slot.className = "slot";
             let img = document.createElement("img");
             img.src = imgSrc;
+            img.setAttribute("data-name", imgSrc.split(".")[0]); // Сохраняем имя
             slot.appendChild(img);
             slotTrack.appendChild(slot);
         }
@@ -96,18 +99,23 @@
         document.getElementById("spinButton").disabled = true;
         
         fillSlots();
-        let stopIndex = slotTrack.children.length - 3;
-        let stopPosition = -(stopIndex * 100);
-        
-        slotTrack.style.transition = "transform 4s ease-out";
-        slotTrack.style.transform = `translateX(${stopPosition}px)`;
+        slotTrack.style.transition = "none";
+        slotTrack.style.transform = "translateX(0px)";
         
         setTimeout(() => {
-            let resultImg = slotTrack.children[stopIndex].querySelector("img").src;
-            document.getElementById("result").innerText = "Твой приз: " + resultImg.split("/").pop().split(".")[0].toUpperCase();
-            spinning = false;
-            document.getElementById("spinButton").disabled = false;
-        }, 4000);
+            let stopIndex = slotTrack.children.length - 4;
+            let stopPosition = -(stopIndex * 100);
+            
+            slotTrack.style.transition = "transform 4s ease-out";
+            slotTrack.style.transform = `translateX(${stopPosition}px)`;
+            
+            setTimeout(() => {
+                let resultImg = slotTrack.children[stopIndex].querySelector("img").getAttribute("data-name");
+                document.getElementById("result").innerText = "Твой приз: " + resultImg.toUpperCase();
+                spinning = false;
+                document.getElementById("spinButton").disabled = false;
+            }, 4000);
+        }, 50);
     }
 </script>
 </body>
