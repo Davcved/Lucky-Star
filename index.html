@@ -9,7 +9,7 @@
         body {
             text-align: center;
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1c1e21, #343a40);
+            background: linear-gradient(135deg, #5dade2, #85c1e9); /* Голубой фон Telegram */
             color: white;
             margin: 0;
             display: flex;
@@ -37,15 +37,15 @@
         }
         .pointer {
             position: absolute;
-            top: -10px;
+            top: -20px;
             left: 50%;
             transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-bottom: 30px solid red;
+            width: 40px;
+            height: 40px;
+            background: red;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
             z-index: 10;
+            border-radius: 5px;
         }
         .spin-btn {
             margin-top: 20px;
@@ -86,6 +86,8 @@
         let isSpinning = false;
         let rotation = 0;
 
+        // Текст на рулетке
+        const options = ["Приз", "Удача", "Бонус", "Скидка", "Сюрприз", "Ничего"];
         const colors = ["#ff4757", "#ffa502", "#2ed573", "#1e90ff", "#3742fa", "#8c7ae6"];
         const sectors = colors.length;
         const angle = (2 * Math.PI) / sectors;
@@ -98,6 +100,16 @@
                 ctx.fillStyle = colors[i];
                 ctx.fill();
                 ctx.stroke();
+                
+                // Добавление текста
+                ctx.save();
+                ctx.fillStyle = "white";
+                ctx.translate(150, 150);
+                ctx.rotate(i * angle + angle / 2);
+                ctx.textAlign = "right";
+                ctx.font = "18px Arial";
+                ctx.fillText(options[i], 110, 10);
+                ctx.restore();
             }
         }
 
@@ -126,6 +138,7 @@
     </script>
 </body>
 </html>
+
 
 
 
