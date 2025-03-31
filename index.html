@@ -3,50 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рулетка</title>
+    <title>Идеальная рулетка</title>
     <style>
         body {
-            background-color: #0088cc;
+            background-color: #17212b;
             color: white;
             text-align: center;
             font-family: Arial, sans-serif;
+            padding: 20px;
         }
         .slot-container {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            align-items: center;
+            gap: 15px;
             padding: 20px;
-            background: #2a2a3a;
-            border-radius: 10px;
-            width: 260px;
+            background: #1c1f26;
+            border-radius: 15px;
+            width: 350px;
             margin: 20px auto;
-            position: relative;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
             overflow: hidden;
+            position: relative;
         }
         .slot {
-            width: 70px;
-            height: 70px;
-            border-radius: 10px;
-            background: white;
+            width: 100px;
+            height: 100px;
+            background: #22262e;
             display: flex;
             align-items: center;
             justify-content: center;
+            border-radius: 10px;
+            border: 2px solid #ffaa00;
             overflow: hidden;
-            border: 2px solid #ffcc00;
+            position: relative;
         }
         .slot img {
-            width: 60px;
+            width: 90px;
             transition: transform 1s ease-out;
         }
+        .arrow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
         button {
-            background: #007aff;
+            background: #0088cc;
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 15px 30px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 18px;
-            margin-top: 10px;
+            font-size: 20px;
+            margin-top: 15px;
+            transition: background 0.3s;
         }
         button:disabled {
             background: gray;
@@ -55,15 +67,16 @@
     </style>
 </head>
 <body>
-<h1>Крути рулетку!</h1>
+<h1>Крути рулетку и выиграй приз!</h1>
 <div class="slot-container">
     <div class="slot"><img src="gift1.png" id="slot1"></div>
     <div class="slot"><img src="gift2.png" id="slot2"></div>
     <div class="slot"><img src="gift3.png" id="slot3"></div>
+    <img class="arrow" src="arrow.png" width="50" height="50">
 </div>
-<button id="spinButton" onclick="spin()">Мне повезёт!</button>
+<button id="spinButton" onclick="spin()">Испытать удачу!</button>
 <script>
-    const items = ["gift1.png", "gift2.png", "gift3.png", "gift4.png", "gift5.png", "gift6.png"];
+    const items = ["gift1.png", "gift2.png", "gift3.png", "gift4.png", "gift5.png", "gift6.png", "gift7.png", "gift8.png"];
     let spinning = false;
     
     function spin() {
@@ -73,9 +86,9 @@
 
         let spins = [randomItem(), randomItem(), randomItem()];
 
-        document.getElementById("slot1").style.transform = "translateY(-100px)";
-        document.getElementById("slot2").style.transform = "translateY(-100px)";
-        document.getElementById("slot3").style.transform = "translateY(-100px)";
+        document.getElementById("slot1").style.transform = "translateY(-200px)";
+        document.getElementById("slot2").style.transform = "translateY(-200px)";
+        document.getElementById("slot3").style.transform = "translateY(-200px)";
 
         setTimeout(() => {
             document.getElementById("slot1").src = spins[0];
@@ -87,7 +100,7 @@
             document.getElementById("slot3").style.transform = "translateY(0)";
             spinning = false;
             document.getElementById("spinButton").disabled = false;
-        }, 1000);
+        }, 1500);
     }
 
     function randomItem() {
@@ -96,6 +109,5 @@
 </script>
 </body>
 </html>
-
 
 
