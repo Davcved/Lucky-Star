@@ -12,7 +12,6 @@
             background-color: #f4f4f4;
         }
         .container {
-            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -29,7 +28,7 @@
             height: 100%;
             border-radius: 50%;
             border: 5px solid #333;
-            transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+            transition: transform 4s ease-out;
         }
         .pointer {
             position: absolute;
@@ -41,6 +40,7 @@
             border-left: 15px solid transparent;
             border-right: 15px solid transparent;
             border-bottom: 30px solid red;
+            z-index: 10;
         }
         .spin-btn {
             margin-top: 20px;
@@ -55,6 +55,11 @@
         .spin-btn:active {
             background-color: #218838;
         }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
     </style>
 </head>
 <body>
@@ -62,22 +67,43 @@
         <h1>Крути рулетку!</h1>
         <div class="wheel-container">
             <div class="pointer"></div>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7f/Roulette_-_The_Casino_-_5.JPG/600px-Roulette_-_The_Casino_-_5.JPG" class="wheel" id="wheel">
+            <canvas id="wheelCanvas" width="300" height="300"></canvas>
         </div>
         <button class="spin-btn" id="spin">Крутить</button>
     </div>
 
     <script>
-        const wheel = document.getElementById("wheel");
+        const canvas = document.getElementById("wheelCanvas");
+        const ctx = canvas.getContext("2d");
         const spinButton = document.getElementById("spin");
+        let rotation = 0;
 
-        spinButton.addEventListener("click", () => {
-            let rotation = Math.floor(Math.random() * 360) + 1800; // 5+ оборотов
-            wheel.style.transition = "transform 4s ease-out";
-            wheel.style.transform = `rotate(${rotation}deg)`;
-        });
+        const colors = ["#ff0000", "#ff8000", "#ffff00", "#80ff00", "#00ff80", "#0080ff", "#8000ff", "#ff0080"];
+        const sectors = colors.length;
+        const angle = (2 * Math.PI) / sectors;
 
-        Telegram.WebApp.expand(); // Разворачивает на весь экран
+        function drawWheel() {
+            for (let i = 0; i < sectors; i++) {
+                ctx.beginPath();
+                ctx.moveTo(150, 150);
+                ctx.arc(150, 150, 150, i * angle, (i + 1) * angle);
+                ctx.fillStyle = colors[i];
+                ctx.fill();
+                ctx.stroke();
+            }
+        }
+
+        function spinWheel() {
+            let spinAngle = Math.floor(Math.random() * 360) + 1800; // 5+ оборотов
+            rotation += spinAngle;
+            canvas.style.transition = "transform 4s ease-out";
+            canvas.style.transform = `rotate(${rotation}deg)`;
+        }
+
+        spinButton.addEventListener("click", spinWheel);
+
+        drawWheel();
+        Telegram.WebApp.expand(); // Разворачивает Mini App на весь экран
     </script>
 </body>
 </html>
