@@ -19,7 +19,7 @@
         .case-container {
             position: relative;
             width: 360px;
-            height: 120px;
+            height: 110px;
             margin: 20px auto;
             overflow: hidden;
             background: #1e2b37;
@@ -38,12 +38,9 @@
         .item {
             width: 100px;
             height: 100px;
-            margin: 0 5px;
-            background: #2a3b4d;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
         }
 
         .item img {
@@ -52,14 +49,14 @@
 
         .arrow {
             position: absolute;
-            top: 50%;
+            top: 0;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%);
             width: 0;
             height: 0;
             border-left: 15px solid transparent;
             border-right: 15px solid transparent;
-            border-top: 20px solid #0088cc;
+            border-bottom: 20px solid #0088cc;
             z-index: 10;
         }
 
@@ -97,34 +94,4 @@
 
 <script>
     const items = ["banana.png", "cherry.png", "seven.png"];
-    const itemsContainer = document.getElementById("items");
-
-    function fillItems() {
-        itemsContainer.innerHTML = "";
-        for (let i = 0; i < 30; i++) {
-            let imgSrc = items[Math.floor(Math.random() * items.length)];
-            let div = document.createElement("div");
-            div.classList.add("item");
-            let img = document.createElement("img");
-            img.src = imgSrc;
-            div.appendChild(img);
-            itemsContainer.appendChild(div);
-        }
-    }
-
-    function openCase() {
-        document.getElementById("spinButton").disabled = true;
-        fillItems();
-        let moveDistance = -((Math.floor(Math.random() * 21) + 10) * 105);
-        itemsContainer.style.transform = `translateX(${moveDistance}px)`;
-
-        setTimeout(() => {
-            document.getElementById("spinButton").disabled = false;
-        }, 2000);
-    }
-
-    fillItems();
-</script>
-
-</body>
-</html>
+    const items
