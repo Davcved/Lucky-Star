@@ -26,6 +26,8 @@
         .slot-track {
             display: flex;
             will-change: transform;
+            position: relative;
+            z-index: 1;
         }
         .slot {
             width: 100px;
@@ -69,8 +71,8 @@
 <body>
 <h1>Испытай удачу!</h1>
 <div class="slot-container">
-    <div class="slot-track" id="slotTrack"></div>
     <div class="arrow"></div>
+    <div class="slot-track" id="slotTrack"></div>
 </div>
 <button id="spinButton" onclick="spin()">Открыть кейс</button>
 <p id="result"></p>
