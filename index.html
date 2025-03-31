@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Крутите!</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-
         body {
             background-color: #17212b;
             color: #ffffff;
@@ -15,7 +15,6 @@
             margin: 0;
             padding: 20px;
         }
-
         .case-container {
             position: relative;
             width: 360px;
@@ -26,14 +25,12 @@
             border-radius: 15px;
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
         }
-
         .items {
             display: flex;
             position: relative;
             transition: transform 4s cubic-bezier(0.22, 1, 0.36, 1);
             will-change: transform;
         }
-
         .item {
             width: 100px;
             height: 100px;
@@ -42,11 +39,9 @@
             justify-content: center;
             flex-shrink: 0;
         }
-
         .item img {
             width: 90px;
         }
-
         .arrow {
             position: absolute;
             bottom: 0;
@@ -60,7 +55,6 @@
             border-right: 20px solid transparent;
             z-index: 10;
         }
-
         button {
             background: #0088cc;
             color: white;
@@ -73,16 +67,13 @@
             margin-top: 15px;
             transition: background 0.3s, transform 0.1s;
         }
-
         button:active {
             transform: scale(0.95);
         }
-
         button:disabled {
             background: gray;
             cursor: not-allowed;
         }
-
         #result {
             font-size: 20px;
             margin-top: 15px;
@@ -102,6 +93,9 @@
 <p id="result"></p>
 
 <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // Разворачивает приложение на весь экран
+
     const items = ["banana.png", "cherry.png", "seven.png"];
     const itemNames = {
         "banana.png": "🍌 Банан",
@@ -114,7 +108,6 @@
     function fillItems() {
         itemsContainer.innerHTML = "";
         let itemList = [];
-
         for (let i = 0; i < 40; i++) { 
             let imgSrc = items[Math.floor(Math.random() * items.length)];
             if (i > 0 && imgSrc === itemList[i - 1]) {
@@ -129,7 +122,6 @@
             div.appendChild(img);
             itemsContainer.appendChild(div);
         }
-
         return itemList;
     }
 
@@ -152,8 +144,15 @@
         setTimeout(() => {
             let selectedItem = document.querySelectorAll('.item img')[selectedIndex].src;
             let itemFileName = selectedItem.split('/').pop();  
-            resultText.textContent = `Вам выпало: ${itemNames[itemFileName]}`;
+            let resultTextContent = `Вам выпало: ${itemNames[itemFileName]}`;
+            
+            resultText.textContent = resultTextContent;
             document.getElementById("spinButton").disabled = false;
+
+            // Отправляем данные в бота
+            if (tg) {
+                tg.sendData(itemFileName);  // Передаем результат в бота
+            }
         }, 4000);
     }
 
