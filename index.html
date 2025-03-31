@@ -14,32 +14,37 @@
         }
         .slot-container {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            overflow: hidden;
+            width: 300px;
+            height: 100px;
+            margin: 20px auto;
             background: #1c1f26;
             border-radius: 15px;
-            width: 150px;
-            margin: 20px auto;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
             position: relative;
+        }
+        .slot-track {
+            display: flex;
+            transition: transform 2s cubic-bezier(0.25, 1, 0.5, 1);
         }
         .slot {
             width: 100px;
             height: 100px;
-            background: #22262e;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 10px;
-            border: 2px solid #ffaa00;
-            overflow: hidden;
-            position: relative;
         }
         .slot img {
             width: 90px;
-            transition: transform 0.7s ease-out;
+        }
+        .indicator {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10px;
+            height: 100px;
+            background: red;
         }
         button {
             background: #0088cc;
@@ -61,33 +66,36 @@
 <body>
 <h1>Испытай удачу!</h1>
 <div class="slot-container">
-    <div class="slot"><img src="banana.png" id="slot"></div>
+    <div class="slot-track" id="slotTrack">
+        <div class="slot"><img src="banana.png"></div>
+        <div class="slot"><img src="cherry.png"></div>
+        <div class="slot"><img src="seven.png"></div>
+        <div class="slot"><img src="banana.png"></div>
+        <div class="slot"><img src="cherry.png"></div>
+        <div class="slot"><img src="seven.png"></div>
+    </div>
+    <div class="indicator"></div>
 </div>
-<button id="spinButton" onclick="spin()">Крутить!</button>
+<button id="spinButton" onclick="spin()">Открыть кейс</button>
 <p id="result"></p>
 <script>
     const items = ["banana.png", "cherry.png", "seven.png"];
     let spinning = false;
-    
+
     function spin() {
         if (spinning) return;
         spinning = true;
         document.getElementById("spinButton").disabled = true;
-
-        let result = randomItem();
-        document.getElementById("slot").style.transform = "translateY(-200px)";
+        
+        let randomOffset = -Math.floor(Math.random() * 3) * 100 - 200;
+        document.getElementById("slotTrack").style.transform = `translateX(${randomOffset}px)`;
         
         setTimeout(() => {
-            document.getElementById("slot").src = result;
-            document.getElementById("slot").style.transform = "translateY(0)";
-            document.getElementById("result").innerText = "Твой приз: " + result.split(".")[0].toUpperCase();
+            let resultIndex = Math.abs(randomOffset / 100) % 3;
+            document.getElementById("result").innerText = "Твой приз: " + items[resultIndex].split(".")[0].toUpperCase();
             spinning = false;
             document.getElementById("spinButton").disabled = false;
-        }, 1000);
-    }
-    
-    function randomItem() {
-        return items[Math.floor(Math.random() * items.length)];
+        }, 2000);
     }
 </script>
 </body>
