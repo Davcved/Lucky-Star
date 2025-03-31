@@ -32,9 +32,10 @@
 
         .items {
             display: flex;
-            position: absolute;
+            position: relative;
             white-space: nowrap;
             transition: transform 2s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
         }
 
         .item {
@@ -43,6 +44,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         .item img {
@@ -116,10 +118,21 @@
         itemsContainer.innerHTML = "";
         let itemList = [];
 
-        for (let i = 0; i < spinCount; i++) {
+        for (let i = 0; i < spinCount + 5; i++) { // +5 чтобы избежать пропадания
             let imgSrc = items[Math.floor(Math.random() * items.length)];
             itemList.push(imgSrc);
 
+            let div = document.createElement("div");
+            div.classList.add("item");
+            let img = document.createElement("img");
+            img.src = imgSrc;
+            div.appendChild(img);
+            itemsContainer.appendChild(div);
+        }
+
+        // Добавляем запасную копию элементов в конец, чтобы избежать пропадания
+        for (let i = 0; i < 5; i++) {
+            let imgSrc = itemList[i];
             let div = document.createElement("div");
             div.classList.add("item");
             let img = document.createElement("img");
@@ -137,7 +150,7 @@
 
         let spinCount = Math.floor(Math.random() * 21) + 10; // От 10 до 30 картинок
         let itemList = fillItems(spinCount);
-        let selectedIndex = spinCount - 5; // Победный предмет (останавливается примерно по центру)
+        let selectedIndex = spinCount; // Победный предмет (останавливается ровно в центре)
         let moveDistance = -(selectedIndex * 105) + 130;
 
         itemsContainer.style.transition = "transform 2s cubic-bezier(0.22, 1, 0.36, 1)";
@@ -156,4 +169,3 @@
 
 </body>
 </html>
-
