@@ -29,6 +29,7 @@
             display: flex;
             position: relative;
             will-change: transform;
+            transition: transform 3s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .item {
             width: 100px;
@@ -159,11 +160,11 @@
         let selectedItem = getRandomItem(); // Выбираем случайный элемент по шансам
 
         // Позиция на рулетке для выбранного элемента
-        let selectedIndex = itemList.indexOf(selectedItem); 
+        let selectedIndex = itemList.indexOf(selectedItem);
         let moveDistance = -(selectedIndex * 100); // Расстояние на которое нужно сдвигать
 
         // Останавливаем прокрутку на выбранном элементе после нескольких кругов
-        let rounds = 1; // Количество полных кругов (крутится 1 раз)
+        let rounds = 2; // Количество полных кругов (крутится 2 раза)
         let distanceToMove = moveDistance + (rounds * 100 * items.length); 
 
         itemsContainer.style.transition = "none";
