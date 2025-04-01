@@ -47,14 +47,14 @@
         }
         .arrow {
             position: absolute;
-            top: -90px; /* Поднял стрелку выше */
+            top: -50px;
             left: 50%;
             transform: translateX(-50%) rotate(180deg);
             width: 0;
             height: 0;
-            border-left: 75px solid transparent;
-            border-right: 75px solid transparent;
-            border-bottom: 130px solid red; /* Сделал стрелку огромной */
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-bottom: 65px solid red; /* В 2 раза меньше */
             z-index: 10;
         }
         button {
@@ -108,13 +108,13 @@
     const itemsContainer = document.getElementById("items");
     const resultText = document.getElementById("result");
 
-    let itemHistory = [];
+    let allItems = [];
 
     function fillItems() {
         itemsContainer.innerHTML = "";
-        let allItems = [];
+        allItems = [];
 
-        for (let i = 0; i < 200; i++) {  // Увеличил количество элементов до 200, чтобы текстуры не пропадали
+        for (let i = 0; i < 200; i++) {  
             let item = itemsData[i % itemsData.length];  
             allItems.push(item.img);
 
@@ -125,8 +125,6 @@
             div.appendChild(img);
             itemsContainer.appendChild(div);
         }
-
-        return allItems;
     }
 
     function getRandomItem() {
@@ -146,7 +144,8 @@
         document.getElementById("spinButton").disabled = true;
         resultText.textContent = "";
 
-        let allItems = fillItems();
+        fillItems(); // Обновляем текстуры перед каждым запуском
+
         let selectedItem = getRandomItem();
         let selectedIndex = allItems.lastIndexOf(selectedItem.img);
         let moveDistance = -selectedIndex * 100; 
@@ -166,9 +165,6 @@
             resultText.textContent = `Вам выпал: ${selectedItem.name}`;
             if (tg) tg.sendData(selectedItem.img);
 
-            itemHistory.push(selectedItem.img);
-            if (itemHistory.length > 200) itemHistory.shift(); // Храним 200 последних призов
-
             document.getElementById("spinButton").disabled = false;
         }, 3100);
     }
@@ -178,7 +174,3 @@
 
 </body>
 </html>
-
-</body>
-</html>
-
