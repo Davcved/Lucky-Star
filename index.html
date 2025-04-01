@@ -47,14 +47,14 @@
         }
         .arrow {
             position: absolute;
-            top: -35px; /* Подняли стрелку вверх */
+            top: -50px; /* Сделал стрелку больше и поднял */
             left: 50%;
-            transform: translateX(-50%) rotate(180deg); /* Перевернули на 180 градусов */
+            transform: translateX(-50%) rotate(180deg);
             width: 0;
             height: 0;
-            border-left: 25px solid transparent;
-            border-right: 25px solid transparent;
-            border-bottom: 40px solid red; /* Теперь стрелка вниз */
+            border-left: 35px solid transparent;
+            border-right: 35px solid transparent;
+            border-bottom: 60px solid red; /* Увеличенная стрелка */
             z-index: 10;
         }
         button {
@@ -109,14 +109,15 @@
     const resultText = document.getElementById("result");
 
     let itemHistory = [];
+    let allItems = [];
 
     function fillItems() {
         itemsContainer.innerHTML = "";
-        let itemList = [];
+        allItems = [];
 
-        for (let i = 0; i < 50; i++) {  // Увеличили количество элементов, чтобы текстуры не исчезали
+        for (let i = 0; i < 100; i++) { // Увеличил количество элементов
             let item = itemsData[i % itemsData.length];  
-            itemList.push(item.img);
+            allItems.push(item.img);
 
             let div = document.createElement("div");
             div.classList.add("item");
@@ -126,7 +127,7 @@
             itemsContainer.appendChild(div);
         }
 
-        return itemList;
+        return allItems;
     }
 
     function getRandomItem() {
@@ -146,10 +147,12 @@
         document.getElementById("spinButton").disabled = true;
         resultText.textContent = "";
 
-        let itemList = fillItems();
-        let selectedItem = getRandomItem();
+        if (allItems.length < 100) {
+            fillItems();
+        }
 
-        let selectedIndex = itemList.lastIndexOf(selectedItem.img);
+        let selectedItem = getRandomItem();
+        let selectedIndex = allItems.lastIndexOf(selectedItem.img);
         let moveDistance = -selectedIndex * 100; 
 
         let rounds = 3;  
@@ -168,7 +171,7 @@
             if (tg) tg.sendData(selectedItem.img);
 
             itemHistory.push(selectedItem.img);
-            if (itemHistory.length > 50) itemHistory.shift(); // Увеличили лимит до 50 призов
+            if (itemHistory.length > 100) itemHistory.shift(); // Храним 100 последних призов
 
             document.getElementById("spinButton").disabled = false;
         }, 3100);
@@ -179,3 +182,4 @@
 
 </body>
 </html>
+
