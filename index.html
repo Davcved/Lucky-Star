@@ -25,11 +25,13 @@
             border-radius: 15px;
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
         }
-        .items {
+        .items, .fake-items {
             display: flex;
             position: relative;
             will-change: transform;
-            transition: transform 3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .items {
+            transition: transform 4s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .item {
             width: 100px;
@@ -44,16 +46,39 @@
         }
         .arrow {
             position: absolute;
-            top: -10px;
+            top: -25px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-bottom: 20px solid transparent;
-            border-top: 30px solid red; /* Красная стрелка */
+            border-top: 20px solid transparent;
+            border-bottom: 30px solid red;
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
             z-index: 10;
+        }
+        .fake-case {
+            position: relative;
+            width: 360px;
+            height: 50px;
+            margin: 10px auto;
+            overflow: hidden;
+            background: #1e2b37;
+            border-radius: 10px;
+        }
+        .fake-item {
+            width: 90px;
+            height: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 14px;
+            color: #ffaa00;
+        }
+        .fake-item img {
+            width: 30px;
         }
         button {
             background: #0088cc;
@@ -89,40 +114,50 @@
     <div class="items" id="items"></div>
     <div class="arrow"></div>
 </div>
+<div class="fake-case">
+    <div class="fake-items" id="fakeItems"></div>
+</div>
 <button id="spinButton" onclick="openCase()">Открыть кейс</button>
 <p id="result"></p>
 
 <script>
     const tg = window.Telegram.WebApp;
-    tg.expand();
+    tg.expand(); 
 
-    // Перечень предметов в рулетке
-    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png"];
+    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png", "diamond2.png"];
     const itemNames = {
         "bear.png": "🐻 Медведь",
         "gift.png": "🎁 Подарок",
         "rose.png": "🌹 Роза",
         "heart.png": "❤️ Сердце",
-        "champagne.png": "🍾 Шампанское"
+        "champagne.png": "🍾 Шампанское",
+        "diamond2.png": "💎 Бриллиант"
     };
-
-    // Реальные шансы выпадения (из 100)
+    const fakeChances = {
+        "bear.png": "25%",
+        "gift.png": "20%",
+        "rose.png": "15%",
+        "heart.png": "20%",
+        "champagne.png": "10%",
+        "diamond2.png": "5%"
+    };
     const realChances = {
-        "bear.png": 25,
-        "gift.png": 20,
-        "rose.png": 15,
-        "heart.png": 20,
-        "champagne.png": 10
+        "bear.png": 0.25,
+        "gift.png": 0.20,
+        "rose.png": 0.15,
+        "heart.png": 0.20,
+        "champagne.png": 0.01,
+        "diamond2.png": 0.0001  // Устанавливаем шанс, чтобы бриллиант никогда не выпал
     };
 
     const itemsContainer = document.getElementById("items");
+    const fakeItemsContainer = document.getElementById("fakeItems");
     const resultText = document.getElementById("result");
 
-    // Заполнение изображений в рулетке
     function fillItems() {
         itemsContainer.innerHTML = "";
         let itemList = [];
-        for (let i = 0; i < 100; i++) { // 100 элементов для более плавной прокрутки
+        for (let i = 0; i < 40; i++) {
             let imgSrc = items[Math.floor(Math.random() * items.length)];
             itemList.push(imgSrc);
 
@@ -136,58 +171,59 @@
         return itemList;
     }
 
-    // Функция для получения случайного элемента с учетом шансов
-    function getRandomItem() {
-        let randomValue = Math.random() * 100;
-        let cumulativeChance = 0;
+    function fillFakeItems() {
+        fakeItemsContainer.innerHTML = "";
+        for (let i = 0; i < 15; i++) {
+            let imgSrc = items[i % items.length];
+            let div = document.createElement("div");
+            div.classList.add("fake-item");
 
-        for (let item in realChances) {
-            cumulativeChance += realChances[item];
-            if (randomValue < cumulativeChance) {
-                return item;
-            }
+            let img = document.createElement("img");
+            img.src = imgSrc;
+            let chanceText = document.createElement("div");
+            chanceText.textContent = fakeChances[imgSrc];
+
+            div.appendChild(img);
+            div.appendChild(chanceText);
+            fakeItemsContainer.appendChild(div);
         }
-
-        return "champagne.png";  // По умолчанию возвращаем шампанское
     }
 
-    // Основная логика открытия кейса
     function openCase() {
         document.getElementById("spinButton").disabled = true;
-        resultText.textContent = "";
+        resultText.textContent = ""; 
 
         let itemList = fillItems();
-        let selectedItem = getRandomItem(); // Выбираем случайный элемент по шансам
-
-        // Позиция на рулетке для выбранного элемента
-        let selectedIndex = itemList.indexOf(selectedItem);
-        let moveDistance = -(selectedIndex * 100); // Расстояние на которое нужно сдвигать
-
-        // Останавливаем прокрутку на выбранном элементе после нескольких кругов
-        let rounds = 2; // Количество полных кругов (крутится 2 раза)
-        let distanceToMove = moveDistance + (rounds * 100 * items.length); 
+        let selectedIndex = 20;  // Выбираем фиксированное место для прокрутки
+        let moveDistance = -(selectedIndex * 100) + 130;
 
         itemsContainer.style.transition = "none";
         itemsContainer.style.transform = "translateX(0px)";
 
         setTimeout(() => {
-            itemsContainer.style.transition = "transform 3s cubic-bezier(0.22, 1, 0.36, 1)";
-            itemsContainer.style.transform = `translateX(${distanceToMove}px)`; // Сдвиг на 1 полный круг
+            itemsContainer.style.transition = "transform 4s cubic-bezier(0.22, 1, 0.36, 1)";
+            itemsContainer.style.transform = `translateX(${moveDistance}px)`;
         }, 50);
 
         setTimeout(() => {
-            // Показываем правильный результат
-            resultText.textContent = `Вам выпал: ${itemNames[selectedItem]}`;
-            
-            // Отправляем данные в Telegram Web App
+            // Здесь определяем шанс выпадения каждого предмета
+            let selectedItem;
+            if (Math.random() < realChances["diamond2.png"]) {
+                selectedItem = "diamond2.png";  // Бриллиант никогда не выпадет из-за очень маленького шанса
+            } else {
+                selectedItem = items[Math.floor(Math.random() * items.length)];
+            }
+
+            let resultTextContent = `Вам выпало: ${itemNames[selectedItem]}`;
+            resultText.textContent = resultTextContent;
+            document.getElementById("spinButton").disabled = false;
             if (tg) {
                 tg.sendData(selectedItem);
             }
-
-            document.getElementById("spinButton").disabled = false;
-        }, 3000);
+        }, 4000);
     }
 
+    fillFakeItems();
     fillItems();
 </script>
 
