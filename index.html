@@ -98,7 +98,8 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png", "diamond2.png"]; // Используем diamond2.png для бриллианта
+    // Перечень предметов в рулетке
+    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png", "diamond2.png"]; // Брильянт теперь diamond2.png
     const itemNames = {
         "bear.png": "🐻 Медведь",
         "gift.png": "🎁 Подарок",
@@ -107,18 +108,21 @@
         "champagne.png": "🍾 Шампанское",
         "diamond2.png": "💎 Бриллиант"
     };
+
+    // Шансы выпадения
     const realChances = {
         "bear.png": 0.25,
         "gift.png": 0.20,
         "rose.png": 0.15,
         "heart.png": 0.20,
         "champagne.png": 0.01,
-        "diamond2.png": 0.005  // Версия бриллианта с diamond2.png
+        "diamond2.png": 0.005
     };
 
     const itemsContainer = document.getElementById("items");
     const resultText = document.getElementById("result");
 
+    // Заполнение изображений в рулетке
     function fillItems() {
         itemsContainer.innerHTML = "";
         let itemList = [];
@@ -136,12 +140,13 @@
         return itemList;
     }
 
+    // Основная логика открытия кейса
     function openCase() {
         document.getElementById("spinButton").disabled = true;
         resultText.textContent = "";
 
         let itemList = fillItems();
-        let selectedIndex = 20; // Это индекс, на который указывает стрелка, в данном случае 20-й элемент
+        let selectedIndex = 20; // Это индекс, на который указывает стрелка
         let moveDistance = -(selectedIndex * 100) + 130;
 
         itemsContainer.style.transition = "none";
@@ -154,16 +159,16 @@
 
         setTimeout(() => {
             // Выбор случайного элемента, с учетом шансов
-            let selectedItem;
+            let selectedItem = "";
             if (Math.random() < realChances["diamond2.png"]) {
                 selectedItem = "diamond2.png";
-            } else if (Math.random() < realChances["champagne.png"] + realChances["diamond2.png"]) {
+            } else if (Math.random() < realChances["diamond2.png"] + realChances["champagne.png"]) {
                 selectedItem = "champagne.png";
             } else {
-                selectedItem = items[Math.floor(Math.random() * 4)];
+                selectedItem = items[Math.floor(Math.random() * items.length)];
             }
 
-            let resultTextContent = `Вам выпало: ${itemNames[selectedItem]}`;
+            let resultTextContent = `Вам выпал: ${itemNames[selectedItem]}`;
             resultText.textContent = resultTextContent;
 
             // Отправляем данные в Telegram Web App
