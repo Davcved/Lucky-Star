@@ -25,16 +25,12 @@
             border-radius: 15px;
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
         }
-        .items, .fake-items {
+        .items {
             display: flex;
             position: relative;
-            will-change: transform;
-        }
-        .items {
             transition: transform 4s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .fake-items {
-            transition: transform 10s linear;
+            will-change: transform;
+            animation: spin 12s linear infinite; /* Плавное бесконечное вращение */
         }
         .item {
             width: 100px;
@@ -46,42 +42,6 @@
         }
         .item img {
             width: 90px;
-        }
-        .arrow {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-top: 20px solid transparent;
-            border-bottom: 30px solid red;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            z-index: 10;
-        }
-        .fake-case {
-            position: relative;
-            width: 360px;
-            height: 50px;
-            margin: 10px auto;
-            overflow: hidden;
-            background: #1e2b37;
-            border-radius: 10px;
-        }
-        .fake-item {
-            width: 90px;
-            height: 50px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 14px;
-            color: #ffaa00;
-        }
-        .fake-item img {
-            width: 30px;
         }
         button {
             background: #0088cc;
@@ -108,6 +68,16 @@
             font-weight: 700;
             color: #ffaa00;
         }
+
+        /* Плавная анимация для бесконечного вращения */
+        @keyframes spin {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
     </style>
 </head>
 <body>
@@ -115,52 +85,30 @@
 <h1>Крутите!</h1>
 <div class="case-container">
     <div class="items" id="items"></div>
-    <div class="arrow"></div>
-</div>
-<div class="fake-case">
-    <div class="fake-items" id="fakeItems"></div>
 </div>
 <button id="spinButton" onclick="openCase()">Открыть кейс</button>
 <p id="result"></p>
 
 <script>
     const tg = window.Telegram.WebApp;
-    tg.expand(); 
+    tg.expand(); // Разворачивает приложение на весь экран
 
     const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png", "diamond.png"];
     const itemNames = {
-        "bear.png": "🐻 Медведь",
-        "gift.png": "🎁 Подарок",
-        "rose.png": "🌹 Роза",
-        "heart.png": "❤️ Сердце",
-        "champagne.png": "🍾 Шампанское",
-        "diamond.png": "💎 Бриллиант"
+        "bear.png": "Медведь",
+        "gift.png": "Подарок",
+        "rose.png": "Роза",
+        "heart.png": "Сердце",
+        "champagne.png": "Шампанское",
+        "diamond.png": "Бриллиант"
     };
-    const fakeChances = {
-        "bear.png": "25%",
-        "gift.png": "20%",
-        "rose.png": "15%",
-        "heart.png": "20%",
-        "champagne.png": "10%",
-        "diamond.png": "5%"
-    };
-    const realChances = {
-        "bear.png": 0.25,
-        "gift.png": 0.20,
-        "rose.png": 0.15,
-        "heart.png": 0.20,
-        "champagne.png": 0.01,
-        "diamond.png": 0.005
-    };
-
     const itemsContainer = document.getElementById("items");
-    const fakeItemsContainer = document.getElementById("fakeItems");
     const resultText = document.getElementById("result");
 
     function fillItems() {
         itemsContainer.innerHTML = "";
         let itemList = [];
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < 40; i++) { 
             let imgSrc = items[Math.floor(Math.random() * items.length)];
             itemList.push(imgSrc);
 
@@ -174,52 +122,30 @@
         return itemList;
     }
 
-    function fillFakeItems() {
-        fakeItemsContainer.innerHTML = "";
-        for (let i = 0; i < 15; i++) {
-            let imgSrc = items[i % items.length];
-            let div = document.createElement("div");
-            div.classList.add("fake-item");
-
-            let img = document.createElement("img");
-            img.src = imgSrc;
-            let chanceText = document.createElement("div");
-            chanceText.textContent = fakeChances[imgSrc];
-
-            div.appendChild(img);
-            div.appendChild(chanceText);
-            fakeItemsContainer.appendChild(div);
-        }
-    }
-
     function openCase() {
         document.getElementById("spinButton").disabled = true;
         resultText.textContent = ""; 
 
         let itemList = fillItems();
-        let selectedIndex = 20;
+        let selectedIndex = Math.floor(Math.random() * itemList.length); // Случайно выбираем предмет
         let moveDistance = -(selectedIndex * 100) + 130;
 
-        itemsContainer.style.transition = "none";
-        itemsContainer.style.transform = "translateX(0px)";
-
+        // Остановка движения через 4 секунды
         setTimeout(() => {
-            itemsContainer.style.transition = "transform 4s cubic-bezier(0.22, 1, 0.36, 1)";
-            itemsContainer.style.transform = `translateX(${moveDistance}px)`;
-        }, 50);
+            let selectedItem = document.querySelectorAll('.item img')[selectedIndex].src;
+            let itemFileName = selectedItem.split('/').pop();  
+            let resultTextContent = `Вам выпал подарок "${itemNames[itemFileName]}"!`;
 
-        setTimeout(() => {
-            let selectedItem = items[Math.random() < realChances["diamond.png"] ? 5 : Math.random() < realChances["champagne.png"] ? 4 : Math.floor(Math.random() * 4)];
-            let resultTextContent = `Вам выпало: ${itemNames[selectedItem]}`;
             resultText.textContent = resultTextContent;
             document.getElementById("spinButton").disabled = false;
+
+            // Отправляем данные в бота
             if (tg) {
-                tg.sendData(selectedItem);
+                tg.sendData(itemFileName);  // Передаем результат в бота
             }
         }, 4000);
     }
 
-    fillFakeItems();
     fillItems();
 </script>
 
