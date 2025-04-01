@@ -25,16 +25,11 @@
             border-radius: 15px;
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
         }
-        .items, .fake-items {
+        .items {
             display: flex;
             position: relative;
             will-change: transform;
-        }
-        .items {
             transition: transform 4s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-        .fake-items {
-            transition: transform 10s linear;
         }
         .item {
             width: 100px;
@@ -49,39 +44,29 @@
         }
         .arrow {
             position: absolute;
-            bottom: 0;
+            top: 0; /* Стрелка сверху */
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) rotate(180deg);
             width: 0;
             height: 0;
-            border-top: 20px solid transparent;
-            border-bottom: 30px solid red;
+            border-top: 30px solid red; /* Указатель вниз */
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
             z-index: 10;
         }
-        .fake-case {
-            position: relative;
-            width: 360px;
-            height: 50px;
-            margin: 10px auto;
-            overflow: hidden;
-            background: #1e2b37;
-            border-radius: 10px;
+        .chance-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
         }
-        .fake-item {
-            width: 90px;
-            height: 50px;
+        .chance-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 14px;
-            color: #ffaa00;
+            margin: 0 10px;
         }
-        .fake-item img {
-            width: 30px;
+        .chance-item img {
+            width: 50px;
         }
         button {
             background: #0088cc;
@@ -117,53 +102,55 @@
     <div class="items" id="items"></div>
     <div class="arrow"></div>
 </div>
-<div class="fake-case">
-    <div class="fake-items" id="fakeItems"></div>
-</div>
 <button id="spinButton" onclick="openCase()">Открыть кейс</button>
 <p id="result"></p>
+
+<!-- Блок с шансами -->
+<div class="chance-container" id="chanceContainer"></div>
 
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand(); 
 
+    // Картинки для рулетки (с ценой, названия с маленькой буквы)
     const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png", "diamond.png"];
     const itemNames = {
-        "bear.png": "🐻 Медведь",
-        "gift.png": "🎁 Подарок",
-        "rose.png": "🌹 Роза",
-        "heart.png": "❤️ Сердце",
-        "champagne.png": "🍾 Шампанское",
-        "diamond.png": "💎 Бриллиант"
+        "bear.png": "🐻 Медведь (15⭐)",
+        "gift.png": "🎁 Подарок (25⭐)",
+        "rose.png": "🌹 Роза (25⭐)",
+        "heart.png": "❤️ Сердце (15⭐)",
+        "champagne.png": "🍾 Шампанское (50⭐)",
+        "diamond.png": "💎 Бриллиант (100⭐)"
     };
+
+    // Картинки для блока с шансами (добавлен "1" в конце)
+    const chanceItems = ["bear1.png", "gift1.png", "rose1.png", "heart1.png", "champagne1.png", "diamond1.png"];
     const fakeChances = {
-        "bear.png": "25%",
-        "gift.png": "20%",
-        "rose.png": "15%",
-        "heart.png": "20%",
-        "champagne.png": "10%",
-        "diamond.png": "5%"
+        "bear1.png": "25%",
+        "gift1.png": "20%",
+        "rose1.png": "15%",
+        "heart1.png": "20%",
+        "champagne1.png": "10%",
+        "diamond1.png": "5%"
     };
+
     const realChances = {
         "bear.png": 0.25,
         "gift.png": 0.20,
         "rose.png": 0.15,
         "heart.png": 0.20,
-        "champagne.png": 0.01,
-        "diamond.png": 0.005
+        "champagne.png": 0.01,  
+        "diamond.png": 0.005  
     };
 
     const itemsContainer = document.getElementById("items");
-    const fakeItemsContainer = document.getElementById("fakeItems");
     const resultText = document.getElementById("result");
+    const chanceContainer = document.getElementById("chanceContainer");
 
     function fillItems() {
         itemsContainer.innerHTML = "";
-        let itemList = [];
         for (let i = 0; i < 40; i++) {
             let imgSrc = items[Math.floor(Math.random() * items.length)];
-            itemList.push(imgSrc);
-
             let div = document.createElement("div");
             div.classList.add("item");
             let img = document.createElement("img");
@@ -171,32 +158,26 @@
             div.appendChild(img);
             itemsContainer.appendChild(div);
         }
-        return itemList;
     }
 
-    function fillFakeItems() {
-        fakeItemsContainer.innerHTML = "";
-        for (let i = 0; i < 15; i++) {
-            let imgSrc = items[i % items.length];
-            let div = document.createElement("div");
-            div.classList.add("fake-item");
-
-            let img = document.createElement("img");
-            img.src = imgSrc;
-            let chanceText = document.createElement("div");
-            chanceText.textContent = fakeChances[imgSrc];
-
-            div.appendChild(img);
-            div.appendChild(chanceText);
-            fakeItemsContainer.appendChild(div);
+    function getRandomItem() {
+        let rand = Math.random();
+        let cumulative = 0;
+        
+        for (let item in realChances) {
+            cumulative += realChances[item];
+            if (rand < cumulative) {
+                return item;
+            }
         }
+        return "bear.png"; // По умолчанию медведь
     }
 
     function openCase() {
         document.getElementById("spinButton").disabled = true;
-        resultText.textContent = ""; 
+        resultText.textContent = "";
 
-        let itemList = fillItems();
+        fillItems();
         let selectedIndex = 20;
         let moveDistance = -(selectedIndex * 100) + 130;
 
@@ -209,7 +190,7 @@
         }, 50);
 
         setTimeout(() => {
-            let selectedItem = items[Math.random() < realChances["diamond.png"] ? 5 : Math.random() < realChances["champagne.png"] ? 4 : Math.floor(Math.random() * 4)];
+            let selectedItem = getRandomItem();
             let resultTextContent = `Вам выпало: ${itemNames[selectedItem]}`;
             resultText.textContent = resultTextContent;
             document.getElementById("spinButton").disabled = false;
@@ -219,8 +200,26 @@
         }, 4000);
     }
 
-    fillFakeItems();
+    function displayChances() {
+        chanceContainer.innerHTML = "";
+        for (let item of chanceItems) {
+            let div = document.createElement("div");
+            div.classList.add("chance-item");
+
+            let img = document.createElement("img");
+            img.src = item; // Берем изображения с "1" в конце
+            
+            let chanceText = document.createElement("div");
+            chanceText.textContent = fakeChances[item];
+
+            div.appendChild(img);
+            div.appendChild(chanceText);
+            chanceContainer.appendChild(div);
+        }
+    }
+
     fillItems();
+    displayChances();
 </script>
 
 </body>
