@@ -131,15 +131,14 @@
 
     function fillItems() {
         itemsContainer.innerHTML = "";
-        for (let i = 0; i < 100; i++) {
-            let imgSrc = items[Math.floor(Math.random() * items.length)];
+        items.forEach(item => {
             let div = document.createElement("div");
             div.classList.add("item");
             let img = document.createElement("img");
-            img.src = imgSrc;
+            img.src = item;
             div.appendChild(img);
             itemsContainer.appendChild(div);
-        }
+        });
     }
 
     function getRandomItem() {
@@ -160,22 +159,10 @@
         resultText.textContent = "";
 
         let selectedItem = getRandomItem();
-        let itemList = Array.from(document.querySelectorAll(".item img")).map(img => img.src.split("/").pop());
-        
-        if (!itemList.includes(selectedItem)) {
-            let div = document.createElement("div");
-            div.classList.add("item");
-            let img = document.createElement("img");
-            img.src = selectedItem;
-            div.appendChild(img);
-            itemsContainer.appendChild(div);
-            itemList.push(selectedItem);
-        }
-
-        let selectedIndex = itemList.indexOf(selectedItem);
-        let moveDistance = selectedIndex * 100;
+        let selectedIndex = items.indexOf(selectedItem);
+        let moveDistance = selectedIndex * -100;
         let rounds = 3;
-        let distanceToMove = -(moveDistance + (rounds * 100 * items.length));
+        let distanceToMove = moveDistance - (rounds * 100 * items.length);
 
         itemsContainer.style.transition = "none";
         itemsContainer.style.transform = "translateX(0px)";
