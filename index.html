@@ -29,6 +29,8 @@
             display: flex;
             position: relative;
             will-change: transform;
+        }
+        .items {
             transition: transform 4s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .item {
@@ -44,29 +46,39 @@
         }
         .arrow {
             position: absolute;
-            top: 0; /* Стрелка теперь сверху */
+            top: -20px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
+            border-bottom: 20px solid transparent;
+            border-top: 30px solid red;
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
-            border-bottom: 30px solid red;
             z-index: 10;
         }
-        .chance-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
+        .fake-case {
+            position: relative;
+            width: 360px;
+            height: 50px;
+            margin: 10px auto;
+            overflow: hidden;
+            background: #1e2b37;
+            border-radius: 10px;
         }
-        .chance-item {
+        .fake-item {
+            width: 90px;
+            height: 50px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 0 10px;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 14px;
+            color: #ffaa00;
         }
-        .chance-item img {
-            width: 50px;
+        .fake-item img {
+            width: 30px;
         }
         button {
             background: #0088cc;
@@ -105,60 +117,38 @@
 <button id="spinButton" onclick="openCase()">Открыть кейс</button>
 <p id="result"></p>
 
-<!-- Блок с шансами -->
-<div class="chance-container" id="chanceContainer"></div>
-
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand(); 
 
-    // Картинки для рулетки (без "1" в конце)
     const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png", "diamond.png"];
     const itemNames = {
-        "bear.png": "🐻 Медведь (15⭐)",
-        "gift.png": "🎁 Подарок (25⭐)",
-        "rose.png": "🌹 Роза (25⭐)",
-        "heart.png": "❤️ Сердце (15⭐)",
-        "champagne.png": "🍾 Шампанское (50⭐)",
-        "diamond.png": "💎 Бриллиант (100⭐)"
+        "bear.png": "🐻 Медведь",
+        "gift.png": "🎁 Подарок",
+        "rose.png": "🌹 Роза",
+        "heart.png": "❤️ Сердце",
+        "champagne.png": "🍾 Шампанское",
+        "diamond.png": "💎 Бриллиант"
     };
-
-    // Картинки для блока с шансами (с "1" в конце)
-    const chanceItems = {
-        "bear.png": "bear1.png",
-        "gift.png": "gift1.png",
-        "rose.png": "rose1.png",
-        "heart.png": "heart1.png",
-        "champagne.png": "champagne1.png",
-        "diamond.png": "diamond1.png"
-    };
-
-    const fakeChances = {
-        "bear1.png": "25%",
-        "gift1.png": "20%",
-        "rose1.png": "15%",
-        "heart1.png": "20%",
-        "champagne1.png": "10%",
-        "diamond1.png": "5%"
-    };
-
     const realChances = {
         "bear.png": 0.25,
         "gift.png": 0.20,
         "rose.png": 0.15,
         "heart.png": 0.20,
-        "champagne.png": 0.01,  
-        "diamond.png": 0.005  
+        "champagne.png": 0.01,
+        "diamond.png": 0.005
     };
 
     const itemsContainer = document.getElementById("items");
     const resultText = document.getElementById("result");
-    const chanceContainer = document.getElementById("chanceContainer");
 
     function fillItems() {
         itemsContainer.innerHTML = "";
+        let itemList = [];
         for (let i = 0; i < 40; i++) {
             let imgSrc = items[Math.floor(Math.random() * items.length)];
+            itemList.push(imgSrc);
+
             let div = document.createElement("div");
             div.classList.add("item");
             let img = document.createElement("img");
@@ -166,26 +156,14 @@
             div.appendChild(img);
             itemsContainer.appendChild(div);
         }
-    }
-
-    function getRandomItem() {
-        let rand = Math.random();
-        let cumulative = 0;
-        
-        for (let item in realChances) {
-            cumulative += realChances[item];
-            if (rand < cumulative) {
-                return item;
-            }
-        }
-        return "bear.png"; // По умолчанию медведь
+        return itemList;
     }
 
     function openCase() {
         document.getElementById("spinButton").disabled = true;
-        resultText.textContent = "";
+        resultText.textContent = ""; 
 
-        let selectedItem = getRandomItem();
+        let itemList = fillItems();
         let selectedIndex = 20;
         let moveDistance = -(selectedIndex * 100) + 130;
 
@@ -198,7 +176,9 @@
         }, 50);
 
         setTimeout(() => {
-            resultText.textContent = `Вам выпало: ${itemNames[selectedItem]}`;
+            let selectedItem = items[Math.random() < realChances["diamond.png"] ? 5 : Math.random() < realChances["champagne.png"] ? 4 : Math.floor(Math.random() * 4)];
+            let resultTextContent = `Вам выпало: ${itemNames[selectedItem]}`;
+            resultText.textContent = resultTextContent;
             document.getElementById("spinButton").disabled = false;
             if (tg) {
                 tg.sendData(selectedItem);
@@ -206,26 +186,7 @@
         }, 4000);
     }
 
-    function displayChances() {
-        chanceContainer.innerHTML = "";
-        for (let item in chanceItems) {
-            let div = document.createElement("div");
-            div.classList.add("chance-item");
-
-            let img = document.createElement("img");
-            img.src = chanceItems[item]; // Используем "bear1.png" и т.д..
-            
-            let chanceText = document.createElement("div");
-            chanceText.textContent = fakeChances[chanceItems[item]] || "0%";
-
-            div.appendChild(img);
-            div.appendChild(chanceText);
-            chanceContainer.appendChild(div);
-        }
-    }
-
     fillItems();
-    displayChances();
 </script>
 
 </body>
