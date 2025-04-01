@@ -30,7 +30,6 @@
             position: relative;
             transition: transform 4s cubic-bezier(0.22, 1, 0.36, 1);
             will-change: transform;
-            animation: spin 12s linear infinite; /* Плавное бесконечное вращение */
         }
         .item {
             width: 100px;
@@ -39,9 +38,17 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            position: relative;
         }
         .item img {
             width: 90px;
+        }
+        .percentage {
+            position: absolute;
+            bottom: -20px;
+            font-size: 14px;
+            color: #fff;
+            font-weight: bold;
         }
         button {
             background: #0088cc;
@@ -68,16 +75,6 @@
             font-weight: 700;
             color: #ffaa00;
         }
-
-        /* Плавная анимация для бесконечного вращения */
-        @keyframes spin {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                transform: translateX(-100%);
-            }
-        }
     </style>
 </head>
 <body>
@@ -102,6 +99,14 @@
         "champagne.png": "Шампанское",
         "diamond.png": "Бриллиант"
     };
+    const itemChances = {
+        "bear.png": 25,
+        "gift.png": 25,
+        "rose.png": 20,
+        "heart.png": 15,
+        "champagne.png": 10,
+        "diamond.png": 5
+    };
     const itemsContainer = document.getElementById("items");
     const resultText = document.getElementById("result");
 
@@ -117,6 +122,13 @@
             let img = document.createElement("img");
             img.src = imgSrc;
             div.appendChild(img);
+            
+            // Добавляем отображение процента
+            let percentage = document.createElement("div");
+            percentage.classList.add("percentage");
+            percentage.textContent = `${itemChances[imgSrc]}%`;
+            div.appendChild(percentage);
+
             itemsContainer.appendChild(div);
         }
         return itemList;
