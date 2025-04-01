@@ -1,33 +1,176 @@
-from aiogram import Bot, Dispatcher, types
-from aiogram.types import WebAppInfo
-from aiogram.utils import executor
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Крутите!</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            background-color: #17212b;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .case-container {
+            position: relative;
+            width: 360px;
+            height: 120px;
+            margin: 20px auto;
+            overflow: hidden;
+            background: #1e2b37;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .items {
+            display: flex;
+            position: relative;
+            transition: transform 3s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+        }
+        .item {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .item img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+        .arrow {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%) rotate(180deg);
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 95px solid red; /* В 1.5 раза больше */
+            z-index: 10;
+        }
+        button {
+            background: #0088cc;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 15px;
+            transition: background 0.3s, transform 0.1s;
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        button:disabled {
+            background: gray;
+            cursor: not-allowed;
+        }
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffaa00;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
 
-TOKEN = "ВАШ_ТОКЕН"  # Вставьте сюда ваш токен бота
-bot = Bot(token=TOKEN)
-dp = Dispatcher(bot)
+<h1>Крутите!</h1>
+<div class="case-container">
+    <div class="items" id="items"></div>
+    <div class="arrow"></div>
+</div>
+<button id="spinButton" onclick="openCase()">Открыть кейс</button>
+<p id="result"></p>
 
-@dp.message_handler(commands=['start'])
-async def start_command(message: types.Message):
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    button = types.KeyboardButton("🎁 Открыть кейс", web_app=WebAppInfo(url="https://ВАШ_САЙТ"))
-    keyboard.add(button)
-    
-    await message.answer("Добро пожаловать в рулетку подарков!", reply_markup=keyboard)
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
 
-@dp.message_handler(content_types=types.ContentType.WEB_APP_DATA)
-async def web_app_response(message: types.Message):
-    item = message.web_app_data.data
-    item_names = {
-        "bear.png": "🐻 Медведь",
-        "gift.png": "🎁 Подарок",
-        "rose.png": "🌹 Роза",
-        "heart.png": "❤️ Сердце",
-        "champagne.png": "🍾 Шампанское"
+    const itemsData = [
+        { img: "bear.png", name: "🐻 Медведь", chance: 25 },
+        { img: "gift.png", name: "🎁 Подарок", chance: 20 },
+        { img: "rose.png", name: "🌹 Роза", chance: 15 },
+        { img: "heart.png", name: "❤️ Сердце", chance: 20 },
+        { img: "champagne.png", name: "🍾 Шампанское", chance: 10 }
+    ];
+
+    const itemsContainer = document.getElementById("items");
+    const resultText = document.getElementById("result");
+
+    let allItems = [];
+
+    function fillItems() {
+        itemsContainer.innerHTML = "";
+        allItems = [];
+
+        for (let i = 0; i < 200; i++) {  
+            let item = itemsData[i % itemsData.length];  
+            allItems.push(item.img);
+
+            let div = document.createElement("div");
+            div.classList.add("item");
+            let img = document.createElement("img");
+            img.src = item.img;
+            div.appendChild(img);
+            itemsContainer.appendChild(div);
+        }
     }
-    item_name = item_names.get(item, "Неизвестный подарок")
-    
-    await message.answer(f"Поздравляем! Вам выпал подарок: {item_name} 🎉")
 
-if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True)
+    function getRandomItem() {
+        let randomValue = Math.random() * 100;
+        let cumulativeChance = 0;
 
+        for (let item of itemsData) {
+            cumulativeChance += item.chance;
+            if (randomValue < cumulativeChance) {
+                return item;
+            }
+        }
+        return itemsData[itemsData.length - 1];  
+    }
+
+    function openCase() {
+        document.getElementById("spinButton").disabled = true;
+        resultText.textContent = "";
+
+        fillItems(); // Обновляем текстуры перед каждым запуском
+
+        let selectedItem = getRandomItem();
+        let selectedIndex = allItems.lastIndexOf(selectedItem.img);
+        let moveDistance = -selectedIndex * 100; 
+
+        let rounds = 3;  
+        let finalDistance = moveDistance - (rounds * 100 * itemsData.length);
+
+        itemsContainer.style.transition = "none";
+        itemsContainer.style.transform = "translateX(0px)";
+
+        setTimeout(() => {
+            itemsContainer.style.transition = "transform 3s cubic-bezier(0.22, 1, 0.36, 1)";
+            itemsContainer.style.transform = `translateX(${finalDistance}px)`;
+        }, 50);
+
+        setTimeout(() => {
+            resultText.textContent = `Вам выпал подарок: ${selectedItem.name}`;
+            if (tg) tg.sendData(selectedItem.img);
+
+            document.getElementById("spinButton").disabled = false;
+        }, 3100);
+    }
+
+    fillItems();
+</script>
+
+</body>
+</html>
