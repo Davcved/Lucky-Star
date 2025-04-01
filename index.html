@@ -49,10 +49,9 @@
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-top: 20px solid transparent;
-            border-bottom: 30px solid red;
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
+            border-top: 30px solid red;
             z-index: 10;
         }
         .chance-container {
@@ -125,7 +124,15 @@
     };
 
     // Картинки для блока с шансами (с "1" в конце)
-    const chanceItems = ["bear1.png", "gift1.png", "rose1.png", "heart1.png", "champagne1.png", "diamond1.png"];
+    const chanceItems = {
+        "bear.png": "bear1.png",
+        "gift.png": "gift1.png",
+        "rose.png": "rose1.png",
+        "heart.png": "heart1.png",
+        "champagne.png": "champagne1.png",
+        "diamond.png": "diamond1.png"
+    };
+
     const fakeChances = {
         "bear1.png": "25%",
         "gift1.png": "20%",
@@ -201,15 +208,15 @@
 
     function displayChances() {
         chanceContainer.innerHTML = "";
-        for (let i = 0; i < chanceItems.length; i++) {
+        for (let item in chanceItems) {
             let div = document.createElement("div");
             div.classList.add("chance-item");
 
             let img = document.createElement("img");
-            img.src = chanceItems[i]; // Используем "bear1.png" и т.д.
+            img.src = chanceItems[item]; // Используем "bear1.png" и т.д.
             
             let chanceText = document.createElement("div");
-            chanceText.textContent = fakeChances[chanceItems[i]] || "0%";
+            chanceText.textContent = fakeChances[chanceItems[item]] || "0%";
 
             div.appendChild(img);
             div.appendChild(chanceText);
