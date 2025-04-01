@@ -96,7 +96,7 @@
 
 <script>
     const tg = window.Telegram.WebApp;
-    tg.expand(); 
+    tg.expand();
 
     const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png", "diamond2.png"]; // Используем diamond2.png для бриллианта
     const itemNames = {
@@ -138,7 +138,7 @@
 
     function openCase() {
         document.getElementById("spinButton").disabled = true;
-        resultText.textContent = ""; 
+        resultText.textContent = "";
 
         let itemList = fillItems();
         let selectedIndex = 20; // Это индекс, на который указывает стрелка, в данном случае 20-й элемент
@@ -153,13 +153,25 @@
         }, 50);
 
         setTimeout(() => {
-            let selectedItem = items[Math.random() < realChances["diamond2.png"] ? 5 : Math.random() < realChances["champagne.png"] ? 4 : Math.floor(Math.random() * 4)];
+            // Выбор случайного элемента, с учетом шансов
+            let selectedItem;
+            if (Math.random() < realChances["diamond2.png"]) {
+                selectedItem = "diamond2.png";
+            } else if (Math.random() < realChances["champagne.png"] + realChances["diamond2.png"]) {
+                selectedItem = "champagne.png";
+            } else {
+                selectedItem = items[Math.floor(Math.random() * 4)];
+            }
+
             let resultTextContent = `Вам выпало: ${itemNames[selectedItem]}`;
             resultText.textContent = resultTextContent;
-            document.getElementById("spinButton").disabled = false;
+
+            // Отправляем данные в Telegram Web App
             if (tg) {
                 tg.sendData(selectedItem);
             }
+
+            document.getElementById("spinButton").disabled = false;
         }, 4000);
     }
 
