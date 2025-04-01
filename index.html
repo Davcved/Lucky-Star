@@ -47,14 +47,14 @@
         }
         .arrow {
             position: absolute;
-            top: -50px; /* Сделал стрелку больше и поднял */
+            top: -90px; /* Поднял стрелку выше */
             left: 50%;
             transform: translateX(-50%) rotate(180deg);
             width: 0;
             height: 0;
-            border-left: 35px solid transparent;
-            border-right: 35px solid transparent;
-            border-bottom: 60px solid red; /* Увеличенная стрелка */
+            border-left: 75px solid transparent;
+            border-right: 75px solid transparent;
+            border-bottom: 130px solid red; /* Сделал стрелку огромной */
             z-index: 10;
         }
         button {
@@ -109,13 +109,12 @@
     const resultText = document.getElementById("result");
 
     let itemHistory = [];
-    let allItems = [];
 
     function fillItems() {
         itemsContainer.innerHTML = "";
-        allItems = [];
+        let allItems = [];
 
-        for (let i = 0; i < 100; i++) { // Увеличил количество элементов
+        for (let i = 0; i < 200; i++) {  // Увеличил количество элементов до 200, чтобы текстуры не пропадали
             let item = itemsData[i % itemsData.length];  
             allItems.push(item.img);
 
@@ -147,10 +146,7 @@
         document.getElementById("spinButton").disabled = true;
         resultText.textContent = "";
 
-        if (allItems.length < 100) {
-            fillItems();
-        }
-
+        let allItems = fillItems();
         let selectedItem = getRandomItem();
         let selectedIndex = allItems.lastIndexOf(selectedItem.img);
         let moveDistance = -selectedIndex * 100; 
@@ -171,7 +167,7 @@
             if (tg) tg.sendData(selectedItem.img);
 
             itemHistory.push(selectedItem.img);
-            if (itemHistory.length > 100) itemHistory.shift(); // Храним 100 последних призов
+            if (itemHistory.length > 200) itemHistory.shift(); // Храним 200 последних призов
 
             document.getElementById("spinButton").disabled = false;
         }, 3100);
@@ -179,6 +175,9 @@
 
     fillItems();
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
