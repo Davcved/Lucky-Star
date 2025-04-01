@@ -94,14 +94,17 @@
 
 <script>
     const tg = window.Telegram.WebApp;
-    tg.expand(); // Разворачивает приложение на весь экран
+    tg.expand();
 
-    const items = ["banana.png", "cherry.png", "seven.png"];
+    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "rocket.png"];
     const itemNames = {
-        "banana.png": "🍌 Банан",
-        "cherry.png": "🍒 Вишня",
-        "seven.png": "🎰 Семерка"
+        "bear.png": "🧸 Медведь (15⭐)",
+        "gift.png": "🎁 Подарок (25⭐)",
+        "rose.png": "🌹 Роза (25⭐)",
+        "heart.png": "❤️ Сердце (15⭐)",
+        "rocket.png": "🚀 Ракета (50⭐)"
     };
+
     const itemsContainer = document.getElementById("items");
     const resultText = document.getElementById("result");
 
@@ -130,7 +133,7 @@
         resultText.textContent = ""; 
 
         let itemList = fillItems();
-        let selectedIndex = 20; // Победный предмет (останавливается по центру)
+        let selectedIndex = 20;
         let moveDistance = -(selectedIndex * 100) + 130;
 
         itemsContainer.style.transition = "none";
@@ -144,14 +147,14 @@
         setTimeout(() => {
             let selectedItem = document.querySelectorAll('.item img')[selectedIndex].src;
             let itemFileName = selectedItem.split('/').pop();  
-            let resultTextContent = `Вам выпало: ${itemNames[itemFileName]}`;
+            let resultTextContent = `Вам выпал подарок: ${itemNames[itemFileName]}`;
             
             resultText.textContent = resultTextContent;
             document.getElementById("spinButton").disabled = false;
 
-            // Отправляем данные в бота
             if (tg) {
-                tg.sendData(itemFileName);  // Передаем результат в бота
+                tg.sendData(itemFileName);
+                setTimeout(() => tg.close(), 3000); // Закрывает WebApp через 3 секунды
             }
         }, 4000);
     }
