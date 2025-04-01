@@ -47,14 +47,14 @@
         }
         .arrow {
             position: absolute;
-            bottom: -10px;
+            top: -35px; /* Подняли стрелку вверх */
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) rotate(180deg); /* Перевернули на 180 градусов */
             width: 0;
             height: 0;
             border-left: 25px solid transparent;
             border-right: 25px solid transparent;
-            border-top: 40px solid red; /* Большая красная стрелка */
+            border-bottom: 40px solid red; /* Теперь стрелка вниз */
             z-index: 10;
         }
         button {
@@ -114,7 +114,7 @@
         itemsContainer.innerHTML = "";
         let itemList = [];
 
-        for (let i = 0; i < 20; i++) {  
+        for (let i = 0; i < 50; i++) {  // Увеличили количество элементов, чтобы текстуры не исчезали
             let item = itemsData[i % itemsData.length];  
             itemList.push(item.img);
 
@@ -168,7 +168,7 @@
             if (tg) tg.sendData(selectedItem.img);
 
             itemHistory.push(selectedItem.img);
-            if (itemHistory.length > 10) itemHistory.shift(); // Храним только последние 10 призов
+            if (itemHistory.length > 50) itemHistory.shift(); // Увеличили лимит до 50 призов
 
             document.getElementById("spinButton").disabled = false;
         }, 3100);
