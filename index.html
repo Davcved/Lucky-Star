@@ -52,11 +52,11 @@
             position: absolute;
             top: -15px;
             left: 50%;
-            transform: translateX(-50%) rotate(180deg);
+            transform: translateX(-50%);
             width: 0;
             height: 0;
             border-bottom: 30px solid transparent;
-            border-top: 45px solid red; /* Стрелка стала в 1.5 раза больше */
+            border-top: 45px solid red; /* Стрелка в 1.5 раза больше */
             border-left: 30px solid transparent;
             border-right: 30px solid transparent;
             z-index: 10;
@@ -130,10 +130,9 @@
     const resultText = document.getElementById("result");
 
     function fillItems() {
-        itemsContainer.innerHTML = "";  // Очищаем контейнер перед добавлением новых элементов
         let itemList = [];
         
-        for (let i = 0; i < 40; i++) {  // Генерируем 40 элементов (чтобы был "бесконечный" список)
+        for (let i = 0; i < 100; i++) {  // 100 элементов для "бесконечной" ленты
             let imgSrc = items[Math.floor(Math.random() * items.length)];
             itemList.push(imgSrc);
 
@@ -165,14 +164,24 @@
         document.getElementById("spinButton").disabled = true;
         resultText.textContent = "";
 
-        let itemList = fillItems();
-        let selectedItem = getRandomItem();  
+        let selectedItem = getRandomItem();
+        let itemList = [...document.querySelectorAll(".item img")].map(img => img.src.split("/").pop());
+
+        if (!itemList.includes(selectedItem)) {
+            let div = document.createElement("div");
+            div.classList.add("item");
+            let img = document.createElement("img");
+            img.src = selectedItem;
+            div.appendChild(img);
+            itemsContainer.appendChild(div);
+            itemList.push(selectedItem);
+        }
 
         let selectedIndex = itemList.indexOf(selectedItem);
-        let moveDistance = -(selectedIndex * 100);
+        let moveDistance = selectedIndex * 100; 
 
-        let rounds = 3;  
-        let distanceToMove = moveDistance + (rounds * 100 * items.length); 
+        let rounds = 3;
+        let distanceToMove = -(moveDistance + (rounds * 100 * items.length)); 
 
         itemsContainer.style.transition = "none";
         itemsContainer.style.transform = "translateX(0px)";
