@@ -95,7 +95,7 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // Перечень предметов в рулетке (без бриллианта)
+    // Перечень предметов в рулетке
     const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png"];
     const itemNames = {
         "bear.png": "🐻 Медведь",
@@ -121,7 +121,7 @@
     function fillItems() {
         itemsContainer.innerHTML = "";
         let itemList = [];
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 100; i++) { // 100 элементов для более плавной прокрутки
             let imgSrc = items[Math.floor(Math.random() * items.length)];
             itemList.push(imgSrc);
 
@@ -163,15 +163,15 @@
         let moveDistance = -(selectedIndex * 100); // Расстояние на которое нужно сдвигать
 
         // Останавливаем прокрутку на выбранном элементе после нескольких кругов
-        let rounds = 3; // Количество полных кругов (крутиться 3 раза)
+        let rounds = 1; // Количество полных кругов (крутится 1 раз)
         let distanceToMove = moveDistance + (rounds * 100 * items.length); 
 
         itemsContainer.style.transition = "none";
         itemsContainer.style.transform = "translateX(0px)";
 
         setTimeout(() => {
-            itemsContainer.style.transition = "transform 4s cubic-bezier(0.22, 1, 0.36, 1)";
-            itemsContainer.style.transform = `translateX(${distanceToMove}px)`; // Сдвиг на 3 полных круга
+            itemsContainer.style.transition = "transform 3s cubic-bezier(0.22, 1, 0.36, 1)";
+            itemsContainer.style.transform = `translateX(${distanceToMove}px)`; // Сдвиг на 1 полный круг
         }, 50);
 
         setTimeout(() => {
@@ -184,7 +184,7 @@
             }
 
             document.getElementById("spinButton").disabled = false;
-        }, 4000);
+        }, 3000);
     }
 
     fillItems();
