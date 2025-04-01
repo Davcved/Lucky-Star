@@ -28,7 +28,6 @@
         .items {
             display: flex;
             position: relative;
-            will-change: transform;
             transition: transform 3s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .item {
@@ -161,24 +160,25 @@
 
         // Позиция на рулетке для выбранного элемента
         let selectedIndex = itemList.indexOf(selectedItem);
-        let moveDistance = -(selectedIndex * 100); // Расстояние на которое нужно сдвигать
+        let moveDistance = selectedIndex * 100; // Расстояние на которое нужно сдвигать
 
         // Останавливаем прокрутку на выбранном элементе после нескольких кругов
         let rounds = 2; // Количество полных кругов (крутится 2 раза)
-        let distanceToMove = moveDistance + (rounds * 100 * items.length); 
+        let distanceToMove = moveDistance + (rounds * 100 * items.length);
 
+        // Плавное движение вправо
         itemsContainer.style.transition = "none";
         itemsContainer.style.transform = "translateX(0px)";
 
         setTimeout(() => {
             itemsContainer.style.transition = "transform 3s cubic-bezier(0.22, 1, 0.36, 1)";
-            itemsContainer.style.transform = `translateX(${distanceToMove}px)`; // Сдвиг на 1 полный круг
+            itemsContainer.style.transform = `translateX(${distanceToMove}px)`; // Сдвиг на 2 полных круга
         }, 50);
 
         setTimeout(() => {
             // Показываем правильный результат
             resultText.textContent = `Вам выпал: ${itemNames[selectedItem]}`;
-            
+
             // Отправляем данные в Telegram Web App
             if (tg) {
                 tg.sendData(selectedItem);
