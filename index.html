@@ -29,7 +29,6 @@
             display: flex;
             position: relative;
             transition: transform 4s cubic-bezier(0.22, 1, 0.36, 1);
-            will-change: transform;
         }
         .item {
             width: 100px;
@@ -96,15 +95,14 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "rocket.png"];
+    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png"];
     const itemNames = {
-        "bear.png": "🧸 Медведь (15⭐)",
+        "bear.png": "🐻 Медведь (15⭐)",
         "gift.png": "🎁 Подарок (25⭐)",
         "rose.png": "🌹 Роза (25⭐)",
         "heart.png": "❤️ Сердце (15⭐)",
-        "rocket.png": "🚀 Ракета (50⭐)"
+        "champagne.png": "🍾 Шампанское (50⭐)"
     };
-
     const itemsContainer = document.getElementById("items");
     const resultText = document.getElementById("result");
 
@@ -130,7 +128,7 @@
 
     function openCase() {
         document.getElementById("spinButton").disabled = true;
-        resultText.textContent = ""; 
+        resultText.textContent = "";
 
         let itemList = fillItems();
         let selectedIndex = 20;
@@ -146,16 +144,19 @@
 
         setTimeout(() => {
             let selectedItem = document.querySelectorAll('.item img')[selectedIndex].src;
-            let itemFileName = selectedItem.split('/').pop();  
+            let itemFileName = selectedItem.split('/').pop();
             let resultTextContent = `Вам выпал подарок: ${itemNames[itemFileName]}`;
-            
+
             resultText.textContent = resultTextContent;
             document.getElementById("spinButton").disabled = false;
 
             if (tg) {
                 tg.sendData(itemFileName);
-                setTimeout(() => tg.close(), 3000); // Закрывает WebApp через 3 секунды
             }
+
+            setTimeout(() => {
+                tg.close();
+            }, 3000);
         }, 4000);
     }
 
