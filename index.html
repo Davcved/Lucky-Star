@@ -6,57 +6,62 @@
     <title>Крутите!</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+        
         body {
             background-color: #17212b;
-            color: white;
-            font-family: Arial, sans-serif;
+            color: #ffffff;
+            font-family: 'Roboto', sans-serif;
             text-align: center;
             margin: 0;
             padding: 20px;
         }
+
         .case-container {
             position: relative;
             width: 360px;
-            height: 120px;
+            height: 110px;
             margin: 20px auto;
             overflow: hidden;
             background: #1e2b37;
             border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
         }
+
         .items {
             display: flex;
             position: relative;
-            transition: transform 3s cubic-bezier(0.22, 1, 0.36, 1);
             will-change: transform;
+            transition: transform 3s cubic-bezier(0.22, 1, 0.36, 1);
         }
+
         .item {
             width: 100px;
             height: 100px;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
         }
+
         .item img {
-            width: 80px;
-            height: 80px;
-            object-fit: contain;
+            width: 90px;
         }
+
         .arrow {
             position: absolute;
-            top: -60px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%) rotate(180deg);
             width: 0;
             height: 0;
-            border-left: 60px solid transparent;
-            border-right: 60px solid transparent;
-            border-bottom: 95px solid red; /* В 1.5 раза больше */
+            border-bottom: 30px solid transparent;
+            border-top: 45px solid red; /* Стрелка стала в 1.5 раза больше */
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
             z-index: 10;
         }
+
         button {
             background: #0088cc;
             color: white;
@@ -65,21 +70,25 @@
             border-radius: 10px;
             cursor: pointer;
             font-size: 18px;
+            font-weight: 500;
             margin-top: 15px;
             transition: background 0.3s, transform 0.1s;
         }
+
         button:active {
             transform: scale(0.95);
         }
+
         button:disabled {
             background: gray;
             cursor: not-allowed;
         }
+
         #result {
             font-size: 20px;
-            font-weight: bold;
-            color: #ffaa00;
             margin-top: 15px;
+            font-weight: 700;
+            color: #ffaa00;
         }
     </style>
 </head>
@@ -97,76 +106,91 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    const itemsData = [
-        { img: "bear.png", name: "🐻 Медведь", chance: 25 },
-        { img: "gift.png", name: "🎁 Подарок", chance: 20 },
-        { img: "rose.png", name: "🌹 Роза", chance: 15 },
-        { img: "heart.png", name: "❤️ Сердце", chance: 20 },
-        { img: "champagne.png", name: "🍾 Шампанское", chance: 10 }
-    ];
+    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png", "diamond.png"];
+    
+    const itemNames = {
+        "bear.png": "🐻 Медведь (15⭐)",
+        "gift.png": "🎁 Подарок (25⭐)",
+        "rose.png": "🌹 Роза (25⭐)",
+        "heart.png": "❤️ Сердце (15⭐)",
+        "champagne.png": "🍾 Шампанское (50⭐)",
+        "diamond.png": "💎 Бриллиант (100⭐)"
+    };
+
+    const realChances = {
+        "bear.png": 25,
+        "gift.png": 20,
+        "rose.png": 15,
+        "heart.png": 20,
+        "champagne.png": 10,
+        "diamond.png": 10
+    };
 
     const itemsContainer = document.getElementById("items");
     const resultText = document.getElementById("result");
 
-    let allItems = [];
-
     function fillItems() {
-        itemsContainer.innerHTML = "";
-        allItems = [];
-
-        for (let i = 0; i < 200; i++) {  
-            let item = itemsData[i % itemsData.length];  
-            allItems.push(item.img);
+        itemsContainer.innerHTML = "";  // Очищаем контейнер перед добавлением новых элементов
+        let itemList = [];
+        
+        for (let i = 0; i < 40; i++) {  // Генерируем 40 элементов (чтобы был "бесконечный" список)
+            let imgSrc = items[Math.floor(Math.random() * items.length)];
+            itemList.push(imgSrc);
 
             let div = document.createElement("div");
             div.classList.add("item");
             let img = document.createElement("img");
-            img.src = item.img;
+            img.src = imgSrc;
             div.appendChild(img);
             itemsContainer.appendChild(div);
         }
+
+        return itemList;
     }
 
     function getRandomItem() {
         let randomValue = Math.random() * 100;
         let cumulativeChance = 0;
 
-        for (let item of itemsData) {
-            cumulativeChance += item.chance;
+        for (let item in realChances) {
+            cumulativeChance += realChances[item];
             if (randomValue < cumulativeChance) {
                 return item;
             }
         }
-        return itemsData[itemsData.length - 1];  
+        return "champagne.png";  
     }
 
     function openCase() {
         document.getElementById("spinButton").disabled = true;
         resultText.textContent = "";
 
-        fillItems(); // Обновляем текстуры перед каждым запуском
+        let itemList = fillItems();
+        let selectedItem = getRandomItem();  
 
-        let selectedItem = getRandomItem();
-        let selectedIndex = allItems.lastIndexOf(selectedItem.img);
-        let moveDistance = -selectedIndex * 100; 
+        let selectedIndex = itemList.indexOf(selectedItem);
+        let moveDistance = -(selectedIndex * 100);
 
         let rounds = 3;  
-        let finalDistance = moveDistance - (rounds * 100 * itemsData.length);
+        let distanceToMove = moveDistance + (rounds * 100 * items.length); 
 
         itemsContainer.style.transition = "none";
         itemsContainer.style.transform = "translateX(0px)";
 
         setTimeout(() => {
             itemsContainer.style.transition = "transform 3s cubic-bezier(0.22, 1, 0.36, 1)";
-            itemsContainer.style.transform = `translateX(${finalDistance}px)`;
+            itemsContainer.style.transform = `translateX(${distanceToMove}px)`;
         }, 50);
 
         setTimeout(() => {
-            resultText.textContent = `Вам выпал подарок: ${selectedItem.name}`;
-            if (tg) tg.sendData(selectedItem.img);
+            resultText.textContent = `🎉 Поздравляем! Вам выпал подарок: ${itemNames[selectedItem]}`;
+            
+            if (tg) {
+                tg.sendData(selectedItem);
+            }
 
             document.getElementById("spinButton").disabled = false;
-        }, 3100);
+        }, 3000);
     }
 
     fillItems();
