@@ -109,14 +109,14 @@
         "diamond2.png": "💎 Бриллиант"
     };
 
-    // Шансы выпадения
+    // Реальные шансы выпадения (из 100)
     const realChances = {
-        "bear.png": 0.25,
-        "gift.png": 0.20,
-        "rose.png": 0.15,
-        "heart.png": 0.20,
-        "champagne.png": 0.01,
-        "diamond2.png": 0.005
+        "bear.png": 25,
+        "gift.png": 20,
+        "rose.png": 15,
+        "heart.png": 20,
+        "champagne.png": 10,
+        "diamond2.png": 1
     };
 
     const itemsContainer = document.getElementById("items");
@@ -158,14 +158,22 @@
         }, 50);
 
         setTimeout(() => {
-            // Выбор случайного элемента, с учетом шансов
+            // Логика выбора предмета с шансами
+            let randomValue = Math.random() * 100;
             let selectedItem = "";
-            if (Math.random() < realChances["diamond2.png"]) {
+
+            if (randomValue < realChances["diamond2.png"]) {
                 selectedItem = "diamond2.png";
-            } else if (Math.random() < realChances["diamond2.png"] + realChances["champagne.png"]) {
+            } else if (randomValue < realChances["diamond2.png"] + realChances["champagne.png"]) {
                 selectedItem = "champagne.png";
+            } else if (randomValue < realChances["diamond2.png"] + realChances["champagne.png"] + realChances["bear.png"]) {
+                selectedItem = "bear.png";
+            } else if (randomValue < realChances["diamond2.png"] + realChances["champagne.png"] + realChances["bear.png"] + realChances["gift.png"]) {
+                selectedItem = "gift.png";
+            } else if (randomValue < realChances["diamond2.png"] + realChances["champagne.png"] + realChances["bear.png"] + realChances["gift.png"] + realChances["rose.png"]) {
+                selectedItem = "rose.png";
             } else {
-                selectedItem = items[Math.floor(Math.random() * items.length)];
+                selectedItem = "heart.png";
             }
 
             let resultTextContent = `Вам выпал: ${itemNames[selectedItem]}`;
