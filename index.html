@@ -178,7 +178,7 @@
         document.getElementById("spinButton").disabled = true;
         resultText.textContent = "";
 
-        fillItems();
+        let selectedItem = getRandomItem();
         let selectedIndex = 20;
         let moveDistance = -(selectedIndex * 100) + 130;
 
@@ -191,9 +191,7 @@
         }, 50);
 
         setTimeout(() => {
-            let selectedItem = getRandomItem();
-            let resultTextContent = `Вам выпало: ${itemNames[selectedItem]}`;
-            resultText.textContent = resultTextContent;
+            resultText.textContent = `Вам выпало: ${itemNames[selectedItem]}`;
             document.getElementById("spinButton").disabled = false;
             if (tg) {
                 tg.sendData(selectedItem);
@@ -203,15 +201,15 @@
 
     function displayChances() {
         chanceContainer.innerHTML = "";
-        for (let item of chanceItems) {
+        for (let i = 0; i < chanceItems.length; i++) {
             let div = document.createElement("div");
             div.classList.add("chance-item");
 
             let img = document.createElement("img");
-            img.src = item; // Берем изображения с "1" в конце
+            img.src = chanceItems[i]; // Используем "bear1.png" и т.д.
             
             let chanceText = document.createElement("div");
-            chanceText.textContent = fakeChances[item];
+            chanceText.textContent = fakeChances[chanceItems[i]] || "0%";
 
             div.appendChild(img);
             div.appendChild(chanceText);
