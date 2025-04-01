@@ -30,9 +30,6 @@
             position: relative;
             will-change: transform;
         }
-        .items {
-            transition: transform 4s cubic-bezier(0.22, 1, 0.36, 1);
-        }
         .item {
             width: 100px;
             height: 100px;
@@ -124,7 +121,7 @@
     function fillItems() {
         itemsContainer.innerHTML = "";
         let itemList = [];
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < 100; i++) {
             let imgSrc = items[Math.floor(Math.random() * items.length)];
             itemList.push(imgSrc);
 
@@ -163,14 +160,18 @@
 
         // Позиция на рулетке для выбранного элемента
         let selectedIndex = itemList.indexOf(selectedItem); 
-        let moveDistance = -(selectedIndex * 100) + 130;
+        let moveDistance = -(selectedIndex * 100); // Расстояние на которое нужно сдвигать
+
+        // Останавливаем прокрутку на выбранном элементе после нескольких кругов
+        let rounds = 3; // Количество полных кругов (крутиться 3 раза)
+        let distanceToMove = moveDistance + (rounds * 100 * items.length); 
 
         itemsContainer.style.transition = "none";
         itemsContainer.style.transform = "translateX(0px)";
 
         setTimeout(() => {
             itemsContainer.style.transition = "transform 4s cubic-bezier(0.22, 1, 0.36, 1)";
-            itemsContainer.style.transform = `translateX(${moveDistance}px)`;
+            itemsContainer.style.transform = `translateX(${distanceToMove}px)`; // Сдвиг на 3 полных круга
         }, 50);
 
         setTimeout(() => {
