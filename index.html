@@ -98,14 +98,14 @@
     const tg = window.Telegram.WebApp;
     tg.expand(); 
 
-    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png", "diamond.png"];
+    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png", "diamond2.png"]; // Используем diamond2.png для бриллианта
     const itemNames = {
         "bear.png": "🐻 Медведь",
         "gift.png": "🎁 Подарок",
         "rose.png": "🌹 Роза",
         "heart.png": "❤️ Сердце",
         "champagne.png": "🍾 Шампанское",
-        "diamond.png": "💎 Бриллиант"
+        "diamond2.png": "💎 Бриллиант"
     };
     const realChances = {
         "bear.png": 0.25,
@@ -113,7 +113,7 @@
         "rose.png": 0.15,
         "heart.png": 0.20,
         "champagne.png": 0.01,
-        "diamond.png": 0.005
+        "diamond2.png": 0.005  // Версия бриллианта с diamond2.png
     };
 
     const itemsContainer = document.getElementById("items");
@@ -153,7 +153,7 @@
         }, 50);
 
         setTimeout(() => {
-            let selectedItem = items[Math.random() < realChances["diamond.png"] ? 5 : Math.random() < realChances["champagne.png"] ? 4 : Math.floor(Math.random() * 4)];
+            let selectedItem = items[Math.random() < realChances["diamond2.png"] ? 5 : Math.random() < realChances["champagne.png"] ? 4 : Math.floor(Math.random() * 4)];
             let resultTextContent = `Вам выпало: ${itemNames[selectedItem]}`;
             resultText.textContent = resultTextContent;
             document.getElementById("spinButton").disabled = false;
