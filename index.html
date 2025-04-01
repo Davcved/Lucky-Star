@@ -99,7 +99,7 @@
     tg.expand();
 
     // Перечень предметов в рулетке (без бриллианта)
-    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png"]; // Бриллиант исключен
+    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png"];
     const itemNames = {
         "bear.png": "🐻 Медведь",
         "gift.png": "🎁 Подарок",
@@ -138,13 +138,31 @@
         return itemList;
     }
 
+    // Функция для получения случайного элемента с учетом шансов
+    function getRandomItem() {
+        let randomValue = Math.random() * 100;
+        let cumulativeChance = 0;
+
+        for (let item in realChances) {
+            cumulativeChance += realChances[item];
+            if (randomValue < cumulativeChance) {
+                return item;
+            }
+        }
+
+        return "champagne.png";  // По умолчанию возвращаем шампанское
+    }
+
     // Основная логика открытия кейса
     function openCase() {
         document.getElementById("spinButton").disabled = true;
         resultText.textContent = "";
 
         let itemList = fillItems();
-        let selectedIndex = 20; // Это индекс, на который указывает стрелка
+        let selectedItem = getRandomItem(); // Выбираем случайный элемент по шансам
+
+        // Позиция на рулетке для выбранного элемента
+        let selectedIndex = itemList.indexOf(selectedItem); 
         let moveDistance = -(selectedIndex * 100) + 130;
 
         itemsContainer.style.transition = "none";
@@ -156,26 +174,9 @@
         }, 50);
 
         setTimeout(() => {
-            // Логика выбора предмета с шансами (без бриллианта)
-            let randomValue = Math.random() * 100;
-            let selectedItem = "";
-
-            // Логика выпадения предметов без бриллианта
-            if (randomValue < realChances["champagne.png"]) {
-                selectedItem = "champagne.png";
-            } else if (randomValue < realChances["champagne.png"] + realChances["bear.png"]) {
-                selectedItem = "bear.png";
-            } else if (randomValue < realChances["champagne.png"] + realChances["bear.png"] + realChances["gift.png"]) {
-                selectedItem = "gift.png";
-            } else if (randomValue < realChances["champagne.png"] + realChances["bear.png"] + realChances["gift.png"] + realChances["rose.png"]) {
-                selectedItem = "rose.png";
-            } else {
-                selectedItem = "heart.png";
-            }
-
-            let resultTextContent = `Вам выпал: ${itemNames[selectedItem]}`;
-            resultText.textContent = resultTextContent;
-
+            // Показываем правильный результат
+            resultText.textContent = `Вам выпал: ${itemNames[selectedItem]}`;
+            
             // Отправляем данные в Telegram Web App
             if (tg) {
                 tg.sendData(selectedItem);
@@ -190,3 +191,4 @@
 
 </body>
 </html>
+
