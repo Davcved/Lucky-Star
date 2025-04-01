@@ -129,18 +129,21 @@
     const itemsContainer = document.getElementById("items");
     const resultText = document.getElementById("result");
 
+    // Функция для начальной загрузки картинок
     function fillItems() {
         itemsContainer.innerHTML = "";
-        items.forEach(item => {
+        for (let i = 0; i < 20; i++) {
+            let item = items[i % items.length];
             let div = document.createElement("div");
             div.classList.add("item");
             let img = document.createElement("img");
             img.src = item;
             div.appendChild(img);
             itemsContainer.appendChild(div);
-        });
+        }
     }
 
+    // Функция для получения случайного предмета
     function getRandomItem() {
         let randomValue = Math.random() * 100;
         let cumulativeChance = 0;
@@ -154,6 +157,7 @@
         return items[Math.floor(Math.random() * items.length)];
     }
 
+    // Функция для открытия кейса
     function openCase() {
         document.getElementById("spinButton").disabled = true;
         resultText.textContent = "";
@@ -161,9 +165,10 @@
         let selectedItem = getRandomItem();
         let selectedIndex = items.indexOf(selectedItem);
         let moveDistance = selectedIndex * -100;
-        let rounds = 3;
+        let rounds = 2;  // Уменьшаем количество прокрутов
         let distanceToMove = moveDistance - (rounds * 100 * items.length);
 
+        // Убираем переход на 0px, чтобы избежать исчезновения картинок
         itemsContainer.style.transition = "none";
         itemsContainer.style.transform = "translateX(0px)";
         
@@ -178,10 +183,11 @@
             resultText.textContent = `🎉 Поздравляем! Вам выпал подарок: ${itemNames[selectedItem]}`;
             if (tg?.sendData) tg.sendData(selectedItem);
             document.getElementById("spinButton").disabled = false;
+            fillItems();  // Добавляем повторное заполнение элементов
         }, 3000);
     }
 
-    fillItems();
+    fillItems();  // Заполнение элементов при загрузке страницы
 </script>
 
 </body>
