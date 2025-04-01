@@ -25,10 +25,16 @@
             border-radius: 15px;
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
         }
-        .items {
+        .items, .fake-items {
             display: flex;
             position: relative;
+            will-change: transform;
+        }
+        .items {
             transition: transform 4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .fake-items {
+            transition: transform 10s linear;
         }
         .item {
             width: 100px;
@@ -54,13 +60,28 @@
             border-right: 20px solid transparent;
             z-index: 10;
         }
-        .probability {
-            margin-top: 20px;
-            font-size: 18px;
+        .fake-case {
+            position: relative;
+            width: 360px;
+            height: 50px;
+            margin: 10px auto;
+            overflow: hidden;
+            background: #1e2b37;
+            border-radius: 10px;
         }
-        .probability span {
-            display: block;
-            margin: 5px 0;
+        .fake-item {
+            width: 90px;
+            height: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 14px;
+            color: #ffaa00;
+        }
+        .fake-item img {
+            width: 30px;
         }
         button {
             background: #0088cc;
@@ -96,63 +117,51 @@
     <div class="items" id="items"></div>
     <div class="arrow"></div>
 </div>
+<div class="fake-case">
+    <div class="fake-items" id="fakeItems"></div>
+</div>
 <button id="spinButton" onclick="openCase()">Открыть кейс</button>
 <p id="result"></p>
 
-<div class="probability">
-    <h3>Шансы выпадения:</h3>
-    <span>🐻 Медведь - 20%</span>
-    <span>🎁 Подарок - 20%</span>
-    <span>🌹 Роза - 20%</span>
-    <span>❤️ Сердце - 20%</span>
-    <span>🍾 Шампанское - <b>10%</b> (реально 2%)</span>
-    <span>💎 Бриллиант - <b>5%</b> (реально <1%) 🤫</span>
-</div>
-
 <script>
     const tg = window.Telegram.WebApp;
-    tg.expand();
+    tg.expand(); 
 
-    const items = [
-        { name: "bear.png", weight: 20 },  
-        { name: "gift.png", weight: 20 },  
-        { name: "rose.png", weight: 20 },  
-        { name: "heart.png", weight: 20 },  
-        { name: "champagne.png", weight: 2 },  
-        { name: "diamond.png", weight: 0.5 }  
-    ];
-    
+    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png", "diamond.png"];
     const itemNames = {
-        "bear.png": "🐻 Медведь (15⭐)",
-        "gift.png": "🎁 Подарок (25⭐)",
-        "rose.png": "🌹 Роза (25⭐)",
-        "heart.png": "❤️ Сердце (15⭐)",
-        "champagne.png": "🍾 Шампанское (50⭐)",
-        "diamond.png": "💎 Бриллиант (100⭐)"
+        "bear.png": "🐻 Медведь",
+        "gift.png": "🎁 Подарок",
+        "rose.png": "🌹 Роза",
+        "heart.png": "❤️ Сердце",
+        "champagne.png": "🍾 Шампанское",
+        "diamond.png": "💎 Бриллиант"
+    };
+    const fakeChances = {
+        "bear.png": "25%",
+        "gift.png": "20%",
+        "rose.png": "15%",
+        "heart.png": "20%",
+        "champagne.png": "10%",
+        "diamond.png": "5%"
+    };
+    const realChances = {
+        "bear.png": 0.25,
+        "gift.png": 0.20,
+        "rose.png": 0.15,
+        "heart.png": 0.20,
+        "champagne.png": 0.01,
+        "diamond.png": 0.005
     };
 
     const itemsContainer = document.getElementById("items");
+    const fakeItemsContainer = document.getElementById("fakeItems");
     const resultText = document.getElementById("result");
-
-    function getRandomItem() {
-        let totalWeight = items.reduce((acc, item) => acc + item.weight, 0);
-        let random = Math.random() * totalWeight;
-        let cumulativeWeight = 0;
-
-        for (let item of items) {
-            cumulativeWeight += item.weight;
-            if (random < cumulativeWeight) {
-                return item.name;
-            }
-        }
-        return "bear.png"; 
-    }
 
     function fillItems() {
         itemsContainer.innerHTML = "";
         let itemList = [];
         for (let i = 0; i < 40; i++) {
-            let imgSrc = getRandomItem();
+            let imgSrc = items[Math.floor(Math.random() * items.length)];
             itemList.push(imgSrc);
 
             let div = document.createElement("div");
@@ -165,9 +174,27 @@
         return itemList;
     }
 
+    function fillFakeItems() {
+        fakeItemsContainer.innerHTML = "";
+        for (let i = 0; i < 15; i++) {
+            let imgSrc = items[i % items.length];
+            let div = document.createElement("div");
+            div.classList.add("fake-item");
+
+            let img = document.createElement("img");
+            img.src = imgSrc;
+            let chanceText = document.createElement("div");
+            chanceText.textContent = fakeChances[imgSrc];
+
+            div.appendChild(img);
+            div.appendChild(chanceText);
+            fakeItemsContainer.appendChild(div);
+        }
+    }
+
     function openCase() {
         document.getElementById("spinButton").disabled = true;
-        resultText.textContent = "";
+        resultText.textContent = ""; 
 
         let itemList = fillItems();
         let selectedIndex = 20;
@@ -182,23 +209,17 @@
         }, 50);
 
         setTimeout(() => {
-            let selectedItem = document.querySelectorAll('.item img')[selectedIndex].src;
-            let itemFileName = selectedItem.split('/').pop();
-            let resultTextContent = `Вам выпал подарок: ${itemNames[itemFileName]}`;
-
+            let selectedItem = items[Math.random() < realChances["diamond.png"] ? 5 : Math.random() < realChances["champagne.png"] ? 4 : Math.floor(Math.random() * 4)];
+            let resultTextContent = `Вам выпало: ${itemNames[selectedItem]}`;
             resultText.textContent = resultTextContent;
             document.getElementById("spinButton").disabled = false;
-
             if (tg) {
-                tg.sendData(itemFileName);
+                tg.sendData(selectedItem);
             }
-
-            setTimeout(() => {
-                tg.close();
-            }, 3000);
         }, 4000);
     }
 
+    fillFakeItems();
     fillItems();
 </script>
 
