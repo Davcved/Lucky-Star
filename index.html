@@ -52,7 +52,7 @@
             width: 0;
             height: 0;
             border-bottom: 20px solid transparent;
-            border-top: 30px solid red;
+            border-top: 30px solid black; /* Черная стрелка */
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
             z-index: 10;
@@ -98,15 +98,14 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // Перечень предметов в рулетке
-    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png", "diamond2.png"]; // Брильянт теперь diamond2.png
+    // Перечень предметов в рулетке (без бриллианта)
+    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png"]; // Бриллиант исключен
     const itemNames = {
         "bear.png": "🐻 Медведь",
         "gift.png": "🎁 Подарок",
         "rose.png": "🌹 Роза",
         "heart.png": "❤️ Сердце",
-        "champagne.png": "🍾 Шампанское",
-        "diamond2.png": "💎 Бриллиант"
+        "champagne.png": "🍾 Шампанское"
     };
 
     // Реальные шансы выпадения (из 100)
@@ -115,8 +114,7 @@
         "gift.png": 20,
         "rose.png": 15,
         "heart.png": 20,
-        "champagne.png": 10,
-        "diamond2.png": 1
+        "champagne.png": 10
     };
 
     const itemsContainer = document.getElementById("items");
@@ -158,19 +156,18 @@
         }, 50);
 
         setTimeout(() => {
-            // Логика выбора предмета с шансами
+            // Логика выбора предмета с шансами (без бриллианта)
             let randomValue = Math.random() * 100;
             let selectedItem = "";
 
-            if (randomValue < realChances["diamond2.png"]) {
-                selectedItem = "diamond2.png";
-            } else if (randomValue < realChances["diamond2.png"] + realChances["champagne.png"]) {
+            // Логика выпадения предметов без бриллианта
+            if (randomValue < realChances["champagne.png"]) {
                 selectedItem = "champagne.png";
-            } else if (randomValue < realChances["diamond2.png"] + realChances["champagne.png"] + realChances["bear.png"]) {
+            } else if (randomValue < realChances["champagne.png"] + realChances["bear.png"]) {
                 selectedItem = "bear.png";
-            } else if (randomValue < realChances["diamond2.png"] + realChances["champagne.png"] + realChances["bear.png"] + realChances["gift.png"]) {
+            } else if (randomValue < realChances["champagne.png"] + realChances["bear.png"] + realChances["gift.png"]) {
                 selectedItem = "gift.png";
-            } else if (randomValue < realChances["diamond2.png"] + realChances["champagne.png"] + realChances["bear.png"] + realChances["gift.png"] + realChances["rose.png"]) {
+            } else if (randomValue < realChances["champagne.png"] + realChances["bear.png"] + realChances["gift.png"] + realChances["rose.png"]) {
                 selectedItem = "rose.png";
             } else {
                 selectedItem = "heart.png";
