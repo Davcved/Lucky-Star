@@ -44,12 +44,13 @@
         }
         .arrow {
             position: absolute;
-            top: 0; /* Стрелка сверху */
+            bottom: 0;
             left: 50%;
-            transform: translateX(-50%) rotate(180deg);
+            transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-top: 30px solid red; /* Указатель вниз */
+            border-top: 20px solid transparent;
+            border-bottom: 30px solid red;
             border-left: 20px solid transparent;
             border-right: 20px solid transparent;
             z-index: 10;
@@ -112,7 +113,7 @@
     const tg = window.Telegram.WebApp;
     tg.expand(); 
 
-    // Картинки для рулетки (с ценой, названия с маленькой буквы)
+    // Картинки для рулетки (без "1" в конце)
     const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png", "diamond.png"];
     const itemNames = {
         "bear.png": "🐻 Медведь (15⭐)",
@@ -123,7 +124,7 @@
         "diamond.png": "💎 Бриллиант (100⭐)"
     };
 
-    // Картинки для блока с шансами (добавлен "1" в конце)
+    // Картинки для блока с шансами (с "1" в конце)
     const chanceItems = ["bear1.png", "gift1.png", "rose1.png", "heart1.png", "champagne1.png", "diamond1.png"];
     const fakeChances = {
         "bear1.png": "25%",
