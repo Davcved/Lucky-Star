@@ -56,7 +56,7 @@
             width: 0;
             height: 0;
             border-bottom: 30px solid transparent;
-            border-top: 45px solid red; /* Стрелка в 1.5 раза больше */
+            border-top: 45px solid red;
             border-left: 30px solid transparent;
             border-right: 30px solid transparent;
             z-index: 10;
@@ -103,8 +103,8 @@
 <p id="result"></p>
 
 <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
+    const tg = window.Telegram?.WebApp;
+    if (tg) tg.expand();
 
     const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png", "diamond.png"];
     
@@ -130,12 +130,9 @@
     const resultText = document.getElementById("result");
 
     function fillItems() {
-        let itemList = [];
-        
-        for (let i = 0; i < 100; i++) {  // 100 элементов для "бесконечной" ленты
+        itemsContainer.innerHTML = "";
+        for (let i = 0; i < 100; i++) {
             let imgSrc = items[Math.floor(Math.random() * items.length)];
-            itemList.push(imgSrc);
-
             let div = document.createElement("div");
             div.classList.add("item");
             let img = document.createElement("img");
@@ -143,8 +140,6 @@
             div.appendChild(img);
             itemsContainer.appendChild(div);
         }
-
-        return itemList;
     }
 
     function getRandomItem() {
@@ -157,7 +152,7 @@
                 return item;
             }
         }
-        return "champagne.png";  
+        return items[Math.floor(Math.random() * items.length)];
     }
 
     function openCase() {
@@ -165,8 +160,8 @@
         resultText.textContent = "";
 
         let selectedItem = getRandomItem();
-        let itemList = [...document.querySelectorAll(".item img")].map(img => img.src.split("/").pop());
-
+        let itemList = Array.from(document.querySelectorAll(".item img")).map(img => img.src.split("/").pop());
+        
         if (!itemList.includes(selectedItem)) {
             let div = document.createElement("div");
             div.classList.add("item");
@@ -178,26 +173,23 @@
         }
 
         let selectedIndex = itemList.indexOf(selectedItem);
-        let moveDistance = selectedIndex * 100; 
-
+        let moveDistance = selectedIndex * 100;
         let rounds = 3;
-        let distanceToMove = -(moveDistance + (rounds * 100 * items.length)); 
+        let distanceToMove = -(moveDistance + (rounds * 100 * items.length));
 
         itemsContainer.style.transition = "none";
         itemsContainer.style.transform = "translateX(0px)";
-
-        setTimeout(() => {
-            itemsContainer.style.transition = "transform 3s cubic-bezier(0.22, 1, 0.36, 1)";
-            itemsContainer.style.transform = `translateX(${distanceToMove}px)`;
-        }, 50);
+        
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                itemsContainer.style.transition = "transform 3s cubic-bezier(0.22, 1, 0.36, 1)";
+                itemsContainer.style.transform = `translateX(${distanceToMove}px)`;
+            });
+        });
 
         setTimeout(() => {
             resultText.textContent = `🎉 Поздравляем! Вам выпал подарок: ${itemNames[selectedItem]}`;
-            
-            if (tg) {
-                tg.sendData(selectedItem);
-            }
-
+            if (tg?.sendData) tg.sendData(selectedItem);
             document.getElementById("spinButton").disabled = false;
         }, 3000);
     }
