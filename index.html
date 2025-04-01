@@ -6,11 +6,10 @@
     <title>Крутите!</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
         body {
             background-color: #17212b;
-            color: #ffffff;
-            font-family: 'Roboto', sans-serif;
+            color: white;
+            font-family: Arial, sans-serif;
             text-align: center;
             margin: 0;
             padding: 20px;
@@ -23,36 +22,33 @@
             overflow: hidden;
             background: #1e2b37;
             border-radius: 15px;
-            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
         }
         .items {
             display: flex;
             position: relative;
-            transition: transform 3s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+            transition: transform 3s ease-out;
         }
         .item {
-            width: 100px;
+            width: 90px;
             height: 100px;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
         }
         .item img {
-            width: 90px;
+            width: 80px;
         }
         .arrow {
             position: absolute;
-            top: -10px;
+            bottom: 5px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-bottom: 20px solid transparent;
-            border-top: 30px solid red; /* Красная стрелка */
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            z-index: 10;
+            border-top: 20px solid red;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
         }
         button {
             background: #0088cc;
@@ -62,22 +58,13 @@
             border-radius: 10px;
             cursor: pointer;
             font-size: 18px;
-            font-weight: 500;
             margin-top: 15px;
-            transition: background 0.3s, transform 0.1s;
-        }
-        button:active {
-            transform: scale(0.95);
-        }
-        button:disabled {
-            background: gray;
-            cursor: not-allowed;
         }
         #result {
             font-size: 20px;
-            margin-top: 15px;
-            font-weight: 700;
+            font-weight: bold;
             color: #ffaa00;
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -95,97 +82,75 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // Перечень предметов в рулетке
-    const items = ["bear.png", "gift.png", "rose.png", "heart.png", "champagne.png"];
-    const itemNames = {
-        "bear.png": "🐻 Медведь",
-        "gift.png": "🎁 Подарок",
-        "rose.png": "🌹 Роза",
-        "heart.png": "❤️ Сердце",
-        "champagne.png": "🍾 Шампанское"
-    };
-
-    // Реальные шансы выпадения (из 100)
-    const realChances = {
-        "bear.png": 25,
-        "gift.png": 20,
-        "rose.png": 15,
-        "heart.png": 20,
-        "champagne.png": 10
-    };
+    const itemsData = [
+        { img: "bear.png", name: "🐻 Медведь", chance: 25 },
+        { img: "gift.png", name: "🎁 Подарок", chance: 20 },
+        { img: "rose.png", name: "🌹 Роза", chance: 15 },
+        { img: "heart.png", name: "❤️ Сердце", chance: 20 },
+        { img: "champagne.png", name: "🍾 Шампанское", chance: 10 }
+    ];
 
     const itemsContainer = document.getElementById("items");
     const resultText = document.getElementById("result");
 
-    // Заполнение изображений в рулетке
     function fillItems() {
         itemsContainer.innerHTML = "";
         let itemList = [];
-        for (let i = 0; i < 100; i++) { // 100 элементов для более плавной прокрутки
-            let imgSrc = items[Math.floor(Math.random() * items.length)];
-            itemList.push(imgSrc);
+
+        for (let i = 0; i < 20; i++) {  
+            let item = itemsData[i % itemsData.length];  
+            itemList.push(item.img);
 
             let div = document.createElement("div");
             div.classList.add("item");
             let img = document.createElement("img");
-            img.src = imgSrc;
+            img.src = item.img;
             div.appendChild(img);
             itemsContainer.appendChild(div);
         }
+
         return itemList;
     }
 
-    // Функция для получения случайного элемента с учетом шансов
     function getRandomItem() {
         let randomValue = Math.random() * 100;
         let cumulativeChance = 0;
 
-        for (let item in realChances) {
-            cumulativeChance += realChances[item];
+        for (let item of itemsData) {
+            cumulativeChance += item.chance;
             if (randomValue < cumulativeChance) {
                 return item;
             }
         }
-
-        return "champagne.png";  // По умолчанию возвращаем шампанское
+        return itemsData[itemsData.length - 1];  
     }
 
-    // Основная логика открытия кейса
     function openCase() {
         document.getElementById("spinButton").disabled = true;
         resultText.textContent = "";
 
         let itemList = fillItems();
-        let selectedItem = getRandomItem(); // Выбираем случайный элемент по шансам
+        let selectedItem = getRandomItem();
 
-        // Позиция на рулетке для выбранного элемента
-        let selectedIndex = itemList.indexOf(selectedItem);
-        let moveDistance = selectedIndex * 100; // Расстояние на которое нужно сдвигать
+        let selectedIndex = itemList.lastIndexOf(selectedItem.img);
+        let moveDistance = -selectedIndex * 90; 
 
-        // Останавливаем прокрутку на выбранном элементе после нескольких кругов
-        let rounds = 2; // Количество полных кругов (крутится 2 раза)
-        let distanceToMove = moveDistance + (rounds * 100 * items.length);
+        let rounds = 3;  
+        let finalDistance = moveDistance - (rounds * 90 * itemsData.length);
 
-        // Плавное движение вправо
         itemsContainer.style.transition = "none";
         itemsContainer.style.transform = "translateX(0px)";
 
         setTimeout(() => {
-            itemsContainer.style.transition = "transform 3s cubic-bezier(0.22, 1, 0.36, 1)";
-            itemsContainer.style.transform = `translateX(${distanceToMove}px)`; // Сдвиг на 2 полных круга
+            itemsContainer.style.transition = "transform 3s ease-out";
+            itemsContainer.style.transform = `translateX(${finalDistance}px)`;
         }, 50);
 
         setTimeout(() => {
-            // Показываем правильный результат
-            resultText.textContent = `Вам выпал: ${itemNames[selectedItem]}`;
-
-            // Отправляем данные в Telegram Web App
-            if (tg) {
-                tg.sendData(selectedItem);
-            }
-
+            resultText.textContent = `Вам выпал: ${selectedItem.name}`;
+            if (tg) tg.sendData(selectedItem.img);
             document.getElementById("spinButton").disabled = false;
-        }, 3000);
+        }, 3100);
     }
 
     fillItems();
